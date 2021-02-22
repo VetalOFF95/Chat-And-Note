@@ -7,6 +7,8 @@
 
 import UIKit
 import FirebaseAuth
+import FBSDKLoginKit
+import GoogleSignIn
 
 class ProfileViewController: UIViewController {
     
@@ -49,20 +51,27 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         actionSheet.addAction(UIAlertAction(title: "Log Out",
                                             style: .destructive,
                                             handler: { [weak self] _ in
-            guard let strongSelf = self else {
-                return
-            }
+                                                guard let strongSelf = self else {
+                                                    return
+                                                }
+                                                
+                                                // Facebook Log out
+                                                FBSDKLoginKit.LoginManager().logOut()
+                                                                                
+                                                // Google Log Out
+                                                GIDSignIn.sharedInstance()?.signOut()
+                                                
             
-            do {
-                try FirebaseAuth.Auth.auth().signOut()
-                
-                let vc = LoginViewController()
-                let nav = UINavigationController(rootViewController: vc)
-                nav.modalPresentationStyle = .fullScreen
-                strongSelf.present(nav, animated: true)
-            } catch {
-                print("Failed to Log Out")
-            }
+                                                do {
+                                                    try FirebaseAuth.Auth.auth().signOut()
+                                                    
+                                                    let vc = LoginViewController()
+                                                    let nav = UINavigationController(rootViewController: vc)
+                                                    nav.modalPresentationStyle = .fullScreen
+                                                    strongSelf.present(nav, animated: true)
+                                                } catch {
+                                                    print("Failed to Log Out")
+                                                }
             
         }))
         
