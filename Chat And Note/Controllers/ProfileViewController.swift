@@ -109,6 +109,9 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                                                     return
                                                 }
                                                 
+                                                UserDefaults.standard.setValue(nil, forKey: "email")
+                                                UserDefaults.standard.setValue(nil, forKey: "name")
+                                                
                                                 // Facebook Log out
                                                 FBSDKLoginKit.LoginManager().logOut()
                                                 

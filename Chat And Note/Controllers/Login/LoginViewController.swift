@@ -181,7 +181,7 @@ class LoginViewController: UIViewController {
             }
             
             let user = result.user
-            
+             
             UserDefaults.standard.set(email, forKey: "email")
             
             print("Logged In user: \(user)")
