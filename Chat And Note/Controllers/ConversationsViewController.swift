@@ -45,7 +45,7 @@ class ConversationsViewController: UIViewController {
         label.isHidden = true
         return label
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose,
@@ -55,41 +55,31 @@ class ConversationsViewController: UIViewController {
         view.addSubview(noConversationsLabel)
         setupTableView()
         fetchConversations()
-        startListeningForConversations()
+        startListeningForCOnversations()
     }
     
-    private func startListeningForConversations() {
+    private func startListeningForCOnversations() {
         guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
             return
         }
-
-//        if let observer = loginObserver {
-//            NotificationCenter.default.removeObserver(observer)
-//        }
-//
-//        print("starting conversation fetch...")
-
+        print("starting conversation fetch...")
+        
         let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
-
+        
         DatabaseManager.shared.getAllConversations(for: safeEmail, completion: { [weak self] result in
             switch result {
             case .success(let conversations):
                 print("successfully got conversation models")
                 guard !conversations.isEmpty else {
-//                    self?.tableView.isHidden = true
-//                    self?.noConversationsLabel.isHidden = false
                     return
                 }
-//                self?.noConversationsLabel.isHidden = true
-//                self?.tableView.isHidden = false
+                
                 self?.conversations = conversations
-//
+                
                 DispatchQueue.main.async {
                     self?.tableView.reloadData()
                 }
             case .failure(let error):
-//                self?.tableView.isHidden = true
-//                self?.noConversationsLabel.isHidden = false
                 print("failed to get convos: \(error)")
             }
         })
@@ -120,15 +110,10 @@ class ConversationsViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
-        noConversationsLabel.frame = CGRect(x: 10,
-                                            y: (view.height-100)/2,
-                                            width: view.width-20,
-                                            height: 100)
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
         validateAuth()
     }
     
@@ -140,7 +125,7 @@ class ConversationsViewController: UIViewController {
             present(nav, animated: false)
         }
     }
-
+    
     private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
@@ -149,14 +134,15 @@ class ConversationsViewController: UIViewController {
     private func fetchConversations() {
         tableView.isHidden = false
     }
+    
 }
 
 extension ConversationsViewController: UITableViewDelegate, UITableViewDataSource {
-
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return conversations.count
     }
-
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let model = conversations[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: ConversationTableViewCell.identifier,
@@ -164,7 +150,7 @@ extension ConversationsViewController: UITableViewDelegate, UITableViewDataSourc
         cell.configure(with: model)
         return cell
     }
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         let model = conversations[indexPath.row]
@@ -174,9 +160,8 @@ extension ConversationsViewController: UITableViewDelegate, UITableViewDataSourc
         vc.navigationItem.largeTitleDisplayMode = .never
         navigationController?.pushViewController(vc, animated: true)
     }
-
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 120
     }
 }
-

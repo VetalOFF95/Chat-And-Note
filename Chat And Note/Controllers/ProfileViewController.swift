@@ -12,17 +12,16 @@ import GoogleSignIn
 
 class ProfileViewController: UIViewController {
     
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet var tableView: UITableView!
     
     let data = ["Log Out"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         tableView.register(UITableViewCell.self,
                            forCellReuseIdentifier: "cell")
-        tableView.dataSource = self
         tableView.delegate = self
+        tableView.dataSource = self
         tableView.tableHeaderView = createTableHeader()
     }
     
@@ -81,14 +80,12 @@ class ProfileViewController: UIViewController {
     
 }
 
-
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return data.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let viewModel = data[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         cell.textLabel?.text = data[indexPath.row]
         cell.textLabel?.textAlignment = .center
@@ -99,25 +96,23 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
+        
         let actionSheet = UIAlertController(title: "",
                                             message: "",
                                             preferredStyle: .actionSheet)
         actionSheet.addAction(UIAlertAction(title: "Log Out",
                                             style: .destructive,
                                             handler: { [weak self] _ in
+                                                
                                                 guard let strongSelf = self else {
                                                     return
                                                 }
                                                 
-                                                UserDefaults.standard.setValue(nil, forKey: "email")
-                                                UserDefaults.standard.setValue(nil, forKey: "name")
-                                                
-                                                // Facebook Log out
+                                                // Log Out facebook
                                                 FBSDKLoginKit.LoginManager().logOut()
                                                 
-                                                // Google Log Out
+                                                // Google Log out
                                                 GIDSignIn.sharedInstance()?.signOut()
-                                                
                                                 
                                                 do {
                                                     try FirebaseAuth.Auth.auth().signOut()
@@ -126,8 +121,9 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                                                     let nav = UINavigationController(rootViewController: vc)
                                                     nav.modalPresentationStyle = .fullScreen
                                                     strongSelf.present(nav, animated: true)
-                                                } catch {
-                                                    print("Failed to Log Out")
+                                                }
+                                                catch {
+                                                    print("Failed to log out")
                                                 }
                                                 
                                             }))
@@ -135,7 +131,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         actionSheet.addAction(UIAlertAction(title: "Cancel",
                                             style: .cancel,
                                             handler: nil))
-        present(actionSheet, animated: true)
         
+        present(actionSheet, animated: true)
     }
 }

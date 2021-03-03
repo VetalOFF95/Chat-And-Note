@@ -43,10 +43,10 @@ class ConversationTableViewCell: UITableViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
-        
+
         userImageView.frame = CGRect(x: 10,
                                      y: 10,
                                      width: 100,
@@ -61,11 +61,12 @@ class ConversationTableViewCell: UITableViewCell {
                                         y: userNameLabel.bottom + 10,
                                         width: contentView.width - 20 - userImageView.width,
                                         height: (contentView.height-20)/2)
+
     }
-    
+
     public func configure(with model: Conversation) {
-        userMessageLabel.text = model.latestMessage.text
-        userNameLabel.text = model.name
+        self.userMessageLabel.text = model.latestMessage.text
+        self.userNameLabel.text = model.name
 
         let path = "images/\(model.otherUserEmail)_profile_picture.png"
         StorageManager.shared.downloadURL(for: path, completion: { [weak self] result in

@@ -41,7 +41,7 @@ class RegisterViewController: UIViewController {
         field.placeholder = "First Name..."
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
         field.leftViewMode = .always
-        field.backgroundColor = .secondarySystemBackground
+        field.backgroundColor = .white
         return field
     }()
     
@@ -56,7 +56,7 @@ class RegisterViewController: UIViewController {
         field.placeholder = "Last Name..."
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
         field.leftViewMode = .always
-        field.backgroundColor = .secondarySystemBackground
+        field.backgroundColor = .white
         return field
     }()
     
@@ -71,7 +71,7 @@ class RegisterViewController: UIViewController {
         field.placeholder = "Email Address..."
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
         field.leftViewMode = .always
-        field.backgroundColor = .secondarySystemBackground
+        field.backgroundColor = .white
         return field
     }()
     
@@ -86,7 +86,7 @@ class RegisterViewController: UIViewController {
         field.placeholder = "Password..."
         field.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: 0))
         field.leftViewMode = .always
-        field.backgroundColor = .secondarySystemBackground
+        field.backgroundColor = .white
         field.isSecureTextEntry = true
         return field
     }()
@@ -102,14 +102,15 @@ class RegisterViewController: UIViewController {
         return button
     }()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         title = "Log In"
         view.backgroundColor = .white
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register", style: .done, target: self, action: #selector(didTapRegister))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register",
+                                                            style: .done,
+                                                            target: self,
+                                                            action: #selector(didTapRegister))
         
         registerButton.addTarget(self,
                                  action: #selector(registerButtonTapped),
@@ -118,7 +119,7 @@ class RegisterViewController: UIViewController {
         emailField.delegate = self
         passwordField.delegate = self
         
-        //add subviews
+        // Add subviews
         view.addSubview(scrollView)
         scrollView.addSubview(imageView)
         scrollView.addSubview(firstNameField)
@@ -133,7 +134,6 @@ class RegisterViewController: UIViewController {
         let gesture = UITapGestureRecognizer(target: self,
                                              action: #selector(didTapChangeProfilePic))
         imageView.addGestureRecognizer(gesture)
-        
     }
     
     @objc private func didTapChangeProfilePic() {
@@ -143,9 +143,9 @@ class RegisterViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         scrollView.frame = view.bounds
-        let size = scrollView.width / 3
         
-        imageView.frame = CGRect(x: (scrollView.width - size) / 2,
+        let size = scrollView.width/3
+        imageView.frame = CGRect(x: (scrollView.width-size)/2,
                                  y: 20,
                                  width: size,
                                  height: size)
@@ -172,6 +172,7 @@ class RegisterViewController: UIViewController {
                                       y: passwordField.bottom+10,
                                       width: scrollView.width-60,
                                       height: 52)
+        
     }
     
     @objc private func registerButtonTapped() {
@@ -195,8 +196,8 @@ class RegisterViewController: UIViewController {
         
         spinner.show(in: view)
         
-        DatabaseManager.shared.userExists(with: email) { [weak self] (exists) in
-            
+        // Firebase Log In
+        DatabaseManager.shared.userExists(with: email, completion: { [weak self] exists in
             guard let strongSelf = self else {
                 return
             }
@@ -206,17 +207,17 @@ class RegisterViewController: UIViewController {
             }
             
             guard !exists else {
-                strongSelf.alertUserLoginError(message: "Looks like a user account for that email adress already exists.")
+                // user already exists
+                strongSelf.alertUserLoginError(message: "Looks like a user account for that email address already exists.")
                 return
             }
             
-            // Firebase Register
-            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-                
+            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password, completion: { authResult, error in
                 guard authResult != nil, error == nil else {
-                    print("Error creating user")
+                    print("Error cureating user")
                     return
                 }
+                
                 let chatUser = ChatAppUser(firstName: firstName,
                                            lastName: lastName,
                                            emailAddress: email)
@@ -234,16 +235,15 @@ class RegisterViewController: UIViewController {
                                 UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
                                 print(downloadUrl)
                             case .failure(let error):
-                                print("Storage manager error: \(error)")
+                                print("Storage maanger error: \(error)")
                             }
                         })
                     }
                 })
                 
                 strongSelf.navigationController?.dismiss(animated: true, completion: nil)
-            }
-            
-        }
+            })
+        })
     }
     
     func alertUserLoginError(message: String = "Please enter all information to create a new account.") {
@@ -260,6 +260,7 @@ class RegisterViewController: UIViewController {
         vc.title = "Create Account"
         navigationController?.pushViewController(vc, animated: true)
     }
+    
 }
 
 extension RegisterViewController: UITextFieldDelegate {
@@ -275,6 +276,7 @@ extension RegisterViewController: UITextFieldDelegate {
         
         return true
     }
+    
 }
 
 extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {

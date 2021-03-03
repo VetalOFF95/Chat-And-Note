@@ -11,13 +11,13 @@ import JGProgressHUD
 class NewConversationViewController: UIViewController {
     
     public var completion: (([String: String]) -> (Void))?
-
+    
     private let spinner = JGProgressHUD(style: .dark)
     
     private var users = [[String: String]]()
-
+    
     private var results = [[String: String]]()
-
+    
     private var hasFetched = false
     
     private let searchBar: UISearchBar = {
@@ -39,7 +39,7 @@ class NewConversationViewController: UIViewController {
         label.isHidden = true
         label.text = "No Results"
         label.textAlignment = .center
-        label.textColor = .gray
+        label.textColor = .green
         label.font = .systemFont(ofSize: 21, weight: .medium)
         return label
     }()
@@ -48,8 +48,10 @@ class NewConversationViewController: UIViewController {
         super.viewDidLoad()
         view.addSubview(noResultsLabel)
         view.addSubview(tableView)
+        
         tableView.delegate = self
         tableView.dataSource = self
+        
         searchBar.delegate = self
         view.backgroundColor = .white
         navigationController?.navigationBar.topItem?.titleView = searchBar
@@ -63,15 +65,16 @@ class NewConversationViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
-        noResultsLabel.frame = CGRect(x: view.width / 4,
-                                      y: (view.height - 200) / 2,
-                                      width: view.width / 2,
+        noResultsLabel.frame = CGRect(x: view.width/4,
+                                      y: (view.height-200)/2,
+                                      width: view.width/2,
                                       height: 200)
     }
-
+    
     @objc private func dismissSelf() {
         dismiss(animated: true, completion: nil)
     }
+    
 }
 
 extension NewConversationViewController: UITableViewDelegate, UITableViewDataSource {
@@ -94,7 +97,6 @@ extension NewConversationViewController: UITableViewDelegate, UITableViewDataSou
             self?.completion?(targetUserData)
         })
     }
-    
 }
 
 extension NewConversationViewController: UISearchBarDelegate {
@@ -103,13 +105,13 @@ extension NewConversationViewController: UISearchBarDelegate {
         guard let text = searchBar.text, !text.replacingOccurrences(of: " ", with: "").isEmpty else {
             return
         }
-
+        
         searchBar.resignFirstResponder()
-
+        
         results.removeAll()
         spinner.show(in: view)
-
-        searchUsers(query: text)
+        
+        self.searchUsers(query: text)
     }
     
     func searchUsers(query: String) {
@@ -138,31 +140,31 @@ extension NewConversationViewController: UISearchBarDelegate {
         guard hasFetched else {
             return
         }
-
+        
         self.spinner.dismiss()
-
-        let results: [[String: String]] = users.filter({
+        
+        let results: [[String: String]] = self.users.filter({
             guard let name = $0["name"]?.lowercased() else {
                 return false
             }
-
+            
             return name.hasPrefix(term.lowercased())
         })
-
+        
         self.results = results
-
+        
         updateUI()
     }
-
+    
     func updateUI() {
         if results.isEmpty {
-            noResultsLabel.isHidden = false
-            tableView.isHidden = true
+            self.noResultsLabel.isHidden = false
+            self.tableView.isHidden = true
         }
         else {
-            noResultsLabel.isHidden = true
-            tableView.isHidden = false
-            tableView.reloadData()
+            self.noResultsLabel.isHidden = true
+            self.tableView.isHidden = false
+            self.tableView.reloadData()
         }
     }
     

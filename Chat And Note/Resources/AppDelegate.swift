@@ -64,25 +64,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         guard let email = user.profile.email,
               let firstName = user.profile.givenName,
               let lastName = user.profile.familyName else {
-            print("Did not parse")
             return
         }
         
         UserDefaults.standard.set(email, forKey: "email")
         UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
-
         
         DatabaseManager.shared.userExists(with: email, completion: { exists in
             if !exists {
                 // insert to database
-                print("Saving to db")
                 let chatUser = ChatAppUser(firstName: firstName,
                                            lastName: lastName,
                                            emailAddress: email)
-                DatabaseManager.shared.insertUser(with: chatUser) { success in
+                DatabaseManager.shared.insertUser(with: chatUser, completion: { success in
                     if success {
-                        //upload image
-                        
+                        // upload image
                         if user.profile.hasImage {
                             guard let url = user.profile.imageURL(withDimension: 200) else {
                                 return
@@ -106,7 +102,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
                             }).resume()
                         }
                     }
-                }
+                })
             }
         })
         

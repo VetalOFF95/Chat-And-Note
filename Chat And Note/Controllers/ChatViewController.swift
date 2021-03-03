@@ -35,14 +35,13 @@ extension MessageKind {
             return "audio"
         case .contact(_):
             return "contact"
-        case .linkPreview(_):
-            return "link_preview"
         case .custom(_):
-            return "custom"
+            return "customc"
+        case .linkPreview(_):
+            return "linkPreview"
         }
     }
 }
-
 
 struct Sender: SenderType {
     public var photoURL: String
@@ -53,11 +52,11 @@ struct Sender: SenderType {
 class ChatViewController: MessagesViewController {
     
     public static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .long
-        formatter.locale = .current
-        return formatter
+        let formattre = DateFormatter()
+        formattre.dateStyle = .medium
+        formattre.timeStyle = .long
+        formattre.locale = .current
+        return formattre
     }()
     
     public let otherUserEmail: String
@@ -70,14 +69,13 @@ class ChatViewController: MessagesViewController {
         guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
             return nil
         }
-        
         let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
         
         return Sender(photoURL: "",
-               senderId: safeEmail,
-               displayName: "Me")
+                      senderId: safeEmail,
+                      displayName: "Me")
     }
-
+    
     init(with email: String, id: String?) {
         self.conversationId = id
         self.otherUserEmail = email
@@ -90,12 +88,12 @@ class ChatViewController: MessagesViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        view.backgroundColor = .red
+        
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
         messagesCollectionView.messagesDisplayDelegate = self
         messageInputBar.delegate = self
-        
     }
     
     private func listenForMessages(id: String, shouldScrollToBottom: Bool) {
@@ -108,10 +106,10 @@ class ChatViewController: MessagesViewController {
                     return
                 }
                 self?.messages = messages
-
+                
                 DispatchQueue.main.async {
                     self?.messagesCollectionView.reloadDataAndKeepOffset()
-
+                    
                     if shouldScrollToBottom {
                         self?.messagesCollectionView.scrollToBottom()
                     }
@@ -124,13 +122,12 @@ class ChatViewController: MessagesViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
         messageInputBar.inputTextView.becomeFirstResponder()
-        
         if let conversationId = conversationId {
             listenForMessages(id: conversationId, shouldScrollToBottom: true)
         }
     }
+    
 }
 
 extension ChatViewController: InputBarAccessoryViewDelegate {
@@ -142,40 +139,40 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
             return
         }
         
-        let message = Message(sender: selfSender,
-                              messageId: messageId,
-                              sentDate: Date(),
-                              kind: .text(text))
+        print("Sending: \(text)")
         
-        // Send message
+        let mmessage = Message(sender: selfSender,
+                               messageId: messageId,
+                               sentDate: Date(),
+                               kind: .text(text))
+        
+        // Send Message
         if isNewConversation {
-            // create convo in db
-            
-            DatabaseManager.shared.createNewConversation(with: otherUserEmail, name: self.title ?? "User", firstMessage: message, completion: { [weak self] success in
+            // create convo in database
+            DatabaseManager.shared.createNewConversation(with: otherUserEmail, name: self.title ?? "User", firstMessage: mmessage, completion: { [weak self]success in
                 if success {
-                    print("Message sent")
+                    print("message sent")
                     self?.isNewConversation = false
-                } else {
-                    print("Failed to send message")
                 }
-                
+                else {
+                    print("faield ot send")
+                }
             })
-        } else {
-            guard let conversationId = conversationId,
-                  let name = self.title else {
+        }
+        else {
+            guard let conversationId = conversationId, let name = self.title else {
                 return
             }
-            // append to existing convo
-            DatabaseManager.shared.sendMessage(to: conversationId,
-                                               otherUserEmail: otherUserEmail,
-                                               name: name,
-                                               newMessage: message) { (success) in
+            
+            // append to existing conversation data
+            DatabaseManager.shared.sendMessage(to: conversationId, otherUserEmail: otherUserEmail, name: name, newMessage: mmessage, completion: { success in
                 if success {
-                    print("Message sent")
-                } else {
-                    print("Failed to send")
+                    print("message sent")
                 }
-            }
+                else {
+                    print("failed to send")
+                }
+            })
         }
     }
     
@@ -184,14 +181,14 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         guard let currentUserEmail = UserDefaults.standard.value(forKey: "email") as? String else {
             return nil
         }
-
+        
         let safeCurrentEmail = DatabaseManager.safeEmail(emailAddress: currentUserEmail)
-
+        
         let dateString = Self.dateFormatter.string(from: Date())
         let newIdentifier = "\(otherUserEmail)_\(safeCurrentEmail)_\(dateString)"
-
+        
         print("created message id: \(newIdentifier)")
-
+        
         return newIdentifier
     }
     
@@ -213,5 +210,4 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
     func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
         return messages.count
     }
-    
 }
