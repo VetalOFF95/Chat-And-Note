@@ -26,6 +26,7 @@
 		FA7885A125E4390A004ED5E2 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885A025E4390A004ED5E2 /* ChatViewController.swift */; };
 		FA7885C025E45982004ED5E2 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885BF25E45982004ED5E2 /* StorageManager.swift */; };
 		FA7885C325EEBC50004ED5E2 /* ConversationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885C225EEBC50004ED5E2 /* ConversationTableViewCell.swift */; };
+		FA7885C625F17520004ED5E2 /* NewConversationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885C525F1751F004ED5E2 /* NewConversationCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		FA7885A025E4390A004ED5E2 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		FA7885BF25E45982004ED5E2 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		FA7885C225EEBC50004ED5E2 /* ConversationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTableViewCell.swift; sourceTree = "<group>"; };
+		FA7885C525F1751F004ED5E2 /* NewConversationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationCell.swift; sourceTree = "<group>"; };
 		FC082CF22F21C8D12B11AD16 /* Pods_Chat_And_Note.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Chat_And_Note.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -135,6 +137,7 @@
 				FA78850525DFC7C8004ED5E2 /* Storyboards */,
 				FA7884F325DFC245004ED5E2 /* Assets.xcassets */,
 				FA7885C225EEBC50004ED5E2 /* ConversationTableViewCell.swift */,
+				FA7885C525F1751F004ED5E2 /* NewConversationCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -317,6 +320,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA78850925DFC909004ED5E2 /* LoginViewController.swift in Sources */,
+				FA7885C625F17520004ED5E2 /* NewConversationCell.swift in Sources */,
 				FA78854A25E0322A004ED5E2 /* DatabaseManager.swift in Sources */,
 				FA78850C25DFC931004ED5E2 /* RegisterViewController.swift in Sources */,
 				FA78851725DFC9A4004ED5E2 /* NewConversationViewController.swift in Sources */,
