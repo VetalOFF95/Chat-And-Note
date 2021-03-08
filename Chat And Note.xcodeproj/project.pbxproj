@@ -27,6 +27,7 @@
 		FA7885C025E45982004ED5E2 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885BF25E45982004ED5E2 /* StorageManager.swift */; };
 		FA7885C325EEBC50004ED5E2 /* ConversationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885C225EEBC50004ED5E2 /* ConversationTableViewCell.swift */; };
 		FA7885C625F17520004ED5E2 /* NewConversationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885C525F1751F004ED5E2 /* NewConversationCell.swift */; };
+		FA7885C925F63F33004ED5E2 /* LocationPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885C825F63F33004ED5E2 /* LocationPickerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +54,7 @@
 		FA7885BF25E45982004ED5E2 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		FA7885C225EEBC50004ED5E2 /* ConversationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTableViewCell.swift; sourceTree = "<group>"; };
 		FA7885C525F1751F004ED5E2 /* NewConversationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationCell.swift; sourceTree = "<group>"; };
+		FA7885C825F63F33004ED5E2 /* LocationPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerViewController.swift; sourceTree = "<group>"; };
 		FC082CF22F21C8D12B11AD16 /* Pods_Chat_And_Note.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Chat_And_Note.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -127,6 +129,7 @@
 				FA78851625DFC9A4004ED5E2 /* NewConversationViewController.swift */,
 				FA78851925DFC9C2004ED5E2 /* ProfileViewController.swift */,
 				FA7885A025E4390A004ED5E2 /* ChatViewController.swift */,
+				FA7885C825F63F33004ED5E2 /* LocationPickerViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -334,6 +337,7 @@
 				FA7885A125E4390A004ED5E2 /* ChatViewController.swift in Sources */,
 				FA78851025DFC966004ED5E2 /* PhotoViewerViewController.swift in Sources */,
 				FA7885C025E45982004ED5E2 /* StorageManager.swift in Sources */,
+				FA7885C925F63F33004ED5E2 /* LocationPickerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
