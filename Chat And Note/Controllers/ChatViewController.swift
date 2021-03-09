@@ -13,59 +13,7 @@ import AVFoundation
 import AVKit
 import CoreLocation
 
-struct Message: MessageType {
-    public var sender: SenderType
-    public var messageId: String
-    public var sentDate: Date
-    public var kind: MessageKind
-}
-
-extension MessageKind {
-    var messageKindString: String {
-        switch self {
-        case .text(_):
-            return "text"
-        case .attributedText(_):
-            return "attributed_text"
-        case .photo(_):
-            return "photo"
-        case .video(_):
-            return "video"
-        case .location(_):
-            return "location"
-        case .emoji(_):
-            return "emoji"
-        case .audio(_):
-            return "audio"
-        case .contact(_):
-            return "contact"
-        case .custom(_):
-            return "customc"
-        case .linkPreview(_):
-            return "linkPreview"
-        }
-    }
-}
-
-struct Sender: SenderType {
-    public var photoURL: String
-    public var senderId: String
-    public var displayName: String
-}
-
-struct Media: MediaItem {
-    var url: URL?
-    var image: UIImage?
-    var placeholderImage: UIImage
-    var size: CGSize
-}
-
-struct Location: LocationItem {
-    var location: CLLocation
-    var size: CGSize
-}
-
-class ChatViewController: MessagesViewController {
+final class ChatViewController: MessagesViewController {
     
     private var senderPhotoURL: URL?
     private var otherUserPhotoURL: URL?
@@ -96,8 +44,8 @@ class ChatViewController: MessagesViewController {
     }
     
     init(with email: String, id: String?) {
-        self.conversationId = id
-        self.otherUserEmail = email
+        conversationId = id
+        otherUserEmail = email
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -304,7 +252,7 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
         
         guard let messageId = createMessageId(),
               let conversationId = conversationId,
-              let name = self.title,
+              let name = title,
               let selfSender = selfSender else {
             return
         }
@@ -424,7 +372,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         // Send Message
         if isNewConversation {
             // create convo in database
-            DatabaseManager.shared.createNewConversation(with: otherUserEmail, name: self.title ?? "User", firstMessage: mmessage, completion: { [weak self]success in
+            DatabaseManager.shared.createNewConversation(with: otherUserEmail, name: title ?? "User", firstMessage: mmessage, completion: { [weak self]success in
                 if success {
                     print("message sent")
                     self?.isNewConversation = false
@@ -440,7 +388,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
             })
         }
         else {
-            guard let conversationId = conversationId, let name = self.title else {
+            guard let conversationId = conversationId, let name = title else {
                 return
             }
             
@@ -556,7 +504,7 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
                 avatarView.sd_setImage(with: otherUserImageURL, completed: nil)
             } else {
         
-                let email = self.otherUserEmail
+                let email = otherUserEmail
 
                 let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
                 let path = "images/\(safeEmail)_profile_picture.png"
@@ -613,7 +561,7 @@ extension ChatViewController: MessageCellDelegate {
                 return
             }
             let vc = PhotoViewerViewController(with: imageUrl)
-            self.navigationController?.pushViewController(vc, animated: true)
+            navigationController?.pushViewController(vc, animated: true)
         case .video(let media):
             guard let videoUrl = media.url else {
                 return
