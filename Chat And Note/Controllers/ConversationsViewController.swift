@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import FirebaseAuth
 import JGProgressHUD
 
 /// Controller that shows list of conversations
@@ -43,19 +42,22 @@ final class ConversationsViewController: UIViewController {
                                                             action: #selector(didTapComposeButton))
         view.addSubview(tableView)
         view.addSubview(noConversationsLabel)
-        setupTableView()
-        startListeningForCOnversations()
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        startListeningForConversations()
         
         loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification, object: nil, queue: .main, using: { [weak self] _ in
             guard let strongSelf = self else {
                 return
             }
             
-            strongSelf.startListeningForCOnversations()
+            strongSelf.startListeningForConversations()
         })
     }
     
-    private func startListeningForCOnversations() {
+    private func startListeningForConversations() {
         guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
             return
         }
@@ -110,41 +112,13 @@ final class ConversationsViewController: UIViewController {
                 vc.navigationItem.largeTitleDisplayMode = .never
                 strongSelf.navigationController?.pushViewController(vc, animated: true)
             } else {
-                strongSelf.createNewConversation(result: result)
+                let conversationsVM = ConversationsVM()
+                let vc = conversationsVM.createNewConversation(result: result)
+                strongSelf.navigationController?.pushViewController(vc, animated: true)
             }
         }
         let navVC = UINavigationController(rootViewController: vc)
         present(navVC, animated: true)
-    }
-    
-    private func createNewConversation(result: SearchResult) {
-        let name = result.name
-        let email = DatabaseManager.safeEmail(emailAddress: result.email)
-        
-        // Check in db if conversation with these two users exists
-        // if it does, reuse conversation id
-        // otherwise use existing code
-        
-        DatabaseManager.shared.conversationExists(with: email, completion: { [weak self] result in
-            guard let strongSelf = self else {
-                return
-            }
-            
-            switch result {
-            case .success(let conversationId):
-                let vc = ChatViewController(with: email, id: conversationId)
-                vc.isNewConversation = false
-                vc.title = name
-                vc.navigationItem.largeTitleDisplayMode = .never
-                strongSelf.navigationController?.pushViewController(vc, animated: true)
-            case .failure(_):
-                let vc = ChatViewController(with: email, id: nil)
-                vc.isNewConversation = true
-                vc.title = name
-                vc.navigationItem.largeTitleDisplayMode = .never
-                strongSelf.navigationController?.pushViewController(vc, animated: true)
-            }
-        })
     }
     
     override func viewDidLayoutSubviews() {
@@ -162,19 +136,14 @@ final class ConversationsViewController: UIViewController {
     }
     
     private func validateAuth() {
-        if FirebaseAuth.Auth.auth().currentUser == nil {
+        let authVM = AuthVM()
+        if !authVM.isLoggedIn() {
             let vc = LoginViewController()
             let nav = UINavigationController(rootViewController: vc)
             nav.modalPresentationStyle = .fullScreen
             present(nav, animated: false)
         }
     }
-    
-    private func setupTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
-    }
-    
 }
 
 extension ConversationsViewController: UITableViewDelegate, UITableViewDataSource {
@@ -206,10 +175,6 @@ extension ConversationsViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 120
-    }
-    
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        return .delete
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {

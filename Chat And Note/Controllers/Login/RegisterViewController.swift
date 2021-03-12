@@ -106,10 +106,8 @@ final class RegisterViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Log In"
+        title = "Register"
         view.backgroundColor = .systemBackground
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register", style: .done, target: self, action: #selector(didTapRegister))
         
         registerButton.addTarget(self,
                                  action: #selector(registerButtonTapped),
@@ -221,7 +219,7 @@ final class RegisterViewController: UIViewController {
                 UserDefaults.standard.setValue(email, forKey: "email")
                 UserDefaults.standard.setValue("\(firstName) \(lastName)", forKey: "name")
                 
-                let chatUser = ChatAppUser(firstName: firstName,
+                let chatUser = AppUser(firstName: firstName,
                                            lastName: lastName,
                                            emailAddress: email)
                 DatabaseManager.shared.insertUser(with: chatUser, completion: { success in
@@ -293,18 +291,13 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
         actionSheet.addAction(UIAlertAction(title: "Take Photo",
                                             style: .default,
                                             handler: { [weak self] _ in
-                                                
                                                 self?.presentCamera()
-                                                
                                             }))
         actionSheet.addAction(UIAlertAction(title: "Chose Photo",
                                             style: .default,
                                             handler: { [weak self] _ in
-                                                
                                                 self?.presentPhotoPicker()
-                                                
                                             }))
-        
         present(actionSheet, animated: true)
     }
     

@@ -27,7 +27,7 @@ final class ChatViewController: MessagesViewController {
     }()
     
     public let otherUserEmail: String
-    private var conversationId: String?
+    public var conversationId: String?
     public var isNewConversation = false
     
     private var messages = [Message]()
