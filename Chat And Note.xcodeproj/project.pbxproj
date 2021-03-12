@@ -194,10 +194,7 @@
 				FA7884EA25DFC243004ED5E2 /* AppDelegate.swift */,
 				FA7884EC25DFC243004ED5E2 /* SceneDelegate.swift */,
 				FA78852325DFD4A6004ED5E2 /* Extensions.swift */,
-				FA78854925E0322A004ED5E2 /* DatabaseManager.swift */,
-				FA7885BF25E45982004ED5E2 /* StorageManager.swift */,
-				FA78860125FA46A3004ED5E2 /* CacheManager.swift */,
-				FA7885FE25FA3D13004ED5E2 /* AuthManager.swift */,
+				FA78861525FC0524004ED5E2 /* Managers */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -225,6 +222,17 @@
 			children = (
 			);
 			path = Protocols;
+			sourceTree = "<group>";
+		};
+		FA78861525FC0524004ED5E2 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				FA78854925E0322A004ED5E2 /* DatabaseManager.swift */,
+				FA7885BF25E45982004ED5E2 /* StorageManager.swift */,
+				FA78860125FA46A3004ED5E2 /* CacheManager.swift */,
+				FA7885FE25FA3D13004ED5E2 /* AuthManager.swift */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
