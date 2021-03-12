@@ -1,5 +1,5 @@
 //
-//  AuthVM.swift
+//  AuthManager.swift
 //  Chat And Note
 //
 //  Created by  Vitalii on 11.03.2021.
@@ -8,7 +8,11 @@
 import Foundation
 import FirebaseAuth
 
-class AuthVM {
+class AuthManager {
+    
+    /// Shared instance of class
+    static let shared = AuthManager()
+    private init() {}
     
     public func isLoggedIn() -> Bool {
         return FirebaseAuth.Auth.auth().currentUser != nil ? true : false
@@ -79,5 +83,64 @@ class AuthVM {
             
             completion(.success(result))
         }
-    }  
+    }
+    
+    public func register(user: AppUser, password: String, image: UIImage?, completion: @escaping (Result<Any, Error>) -> Void) {
+        
+        DatabaseManager.shared.userExists(with: user.emailAddress) { exists in
+            
+            guard !exists else {
+                completion(.failure(AuthError.accountExists))
+                return
+            }
+            
+            // Firebase Register
+            FirebaseAuth.Auth.auth().createUser(withEmail: user.emailAddress, password: password) { authResult, error in
+                
+                guard authResult != nil, error == nil else {
+                    completion(.failure(AuthError.userCreation))
+                    return
+                }
+                
+                CacheManager.shared.saveEmail(email: user.emailAddress)
+                CacheManager.shared.saveFullName(firstName: user.firstName, lastName: user.lastName)
+                
+                DatabaseManager.shared.insertUser(with: user, completion: { success in
+                    if success {
+                        // upload image
+                        guard let image = image,
+                              let data = image.pngData() else {
+                            return
+                        }
+                        let filename = user.profilePictureFileName
+                        StorageManager.shared.uploadProfilePicture(with: data, fileName: filename, completion: { result in
+                            switch result {
+                            case .success(let downloadUrl):
+                                CacheManager.shared.saveProfilePictureURL(url: downloadUrl)
+                                print(downloadUrl)
+                            case .failure(let error):
+                                print("Storage manager error: \(error)")
+                            }
+                        })
+                    }
+                    completion(.failure(AuthError.userCreation))
+                })
+                completion(.success(user))
+            }
+        }
+    }
+}
+
+public enum AuthError: Error {
+    case accountExists
+    case userCreation
+
+    public var localizedDescription: String {
+        switch self {
+        case .accountExists:
+            return "Looks like a user account for that email adress already exists."
+        case .userCreation:
+            return "Error creating user"
+        }
+    }
 }

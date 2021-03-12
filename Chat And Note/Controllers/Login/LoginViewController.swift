@@ -172,8 +172,7 @@ final class LoginViewController: UIViewController {
         spinner.show(in: view)
         
         // Firebase Log In
-        let authVM = AuthVM()
-        authVM.logIn(with: email, password: password) { [weak self] result in
+        AuthManager.shared.logIn(with: email, password: password) { [weak self] result in
             
             DispatchQueue.main.async {
                 self?.spinner.dismiss()

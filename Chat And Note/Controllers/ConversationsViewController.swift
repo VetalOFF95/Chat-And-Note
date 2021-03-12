@@ -136,8 +136,7 @@ final class ConversationsViewController: UIViewController {
     }
     
     private func validateAuth() {
-        let authVM = AuthVM()
-        if !authVM.isLoggedIn() {
+        if !AuthManager.shared.isLoggedIn() {
             let vc = LoginViewController()
             let nav = UINavigationController(rootViewController: vc)
             nav.modalPresentationStyle = .fullScreen

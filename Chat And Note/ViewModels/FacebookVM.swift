@@ -53,8 +53,7 @@ class FacebookVM {
                 }
             }
             
-            let authVM = AuthVM()
-            authVM.logInWithFacebook(with: token) { result in
+            AuthManager.shared.logInWithFacebook(with: token) { result in
                 switch result {
                 case .success(_):
                     print("Successfully logged user in via Facebook")

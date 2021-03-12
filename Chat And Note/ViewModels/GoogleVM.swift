@@ -45,8 +45,7 @@ class GoogleVM {
             return
         }
         
-        let authVM = AuthVM()
-        authVM.logInWithGoogle(idToken: idToken, accessToken: accessToken) { result in
+        AuthManager.shared.logInWithGoogle(idToken: idToken, accessToken: accessToken) { result in
             switch result {
             case .success(_):
                 print("Successfully logged user in via Google")
