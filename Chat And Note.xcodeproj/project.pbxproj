@@ -38,6 +38,7 @@
 		FA78860825FA943F004ED5E2 /* FacebookUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78860725FA943F004ED5E2 /* FacebookUser.swift */; };
 		FA78860C25FA9E72004ED5E2 /* AppUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78860B25FA9E72004ED5E2 /* AppUser.swift */; };
 		FA78861125FAD96D004ED5E2 /* GoogleVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78861025FAD96D004ED5E2 /* GoogleVM.swift */; };
+		FA78861825FC202D004ED5E2 /* NewConversationVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78861725FC202D004ED5E2 /* NewConversationVM.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,6 +76,7 @@
 		FA78860725FA943F004ED5E2 /* FacebookUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookUser.swift; sourceTree = "<group>"; };
 		FA78860B25FA9E72004ED5E2 /* AppUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUser.swift; sourceTree = "<group>"; };
 		FA78861025FAD96D004ED5E2 /* GoogleVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleVM.swift; sourceTree = "<group>"; };
+		FA78861725FC202D004ED5E2 /* NewConversationVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationVM.swift; sourceTree = "<group>"; };
 		FC082CF22F21C8D12B11AD16 /* Pods_Chat_And_Note.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Chat_And_Note.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -184,6 +186,7 @@
 				FA7885FA25FA3239004ED5E2 /* ConversationsVM.swift */,
 				FA78860425FA91F0004ED5E2 /* FacebookVM.swift */,
 				FA78861025FAD96D004ED5E2 /* GoogleVM.swift */,
+				FA78861725FC202D004ED5E2 /* NewConversationVM.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -393,6 +396,7 @@
 				FA7885C625F17520004ED5E2 /* NewConversationCell.swift in Sources */,
 				FA78854A25E0322A004ED5E2 /* DatabaseManager.swift in Sources */,
 				FA7885EE25F78346004ED5E2 /* ChatModels.swift in Sources */,
+				FA78861825FC202D004ED5E2 /* NewConversationVM.swift in Sources */,
 				FA78860825FA943F004ED5E2 /* FacebookUser.swift in Sources */,
 				FA78850C25DFC931004ED5E2 /* RegisterViewController.swift in Sources */,
 				FA78851725DFC9A4004ED5E2 /* NewConversationViewController.swift in Sources */,
