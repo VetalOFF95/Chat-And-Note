@@ -129,6 +129,22 @@ class AuthManager {
             }
         }
     }
+    
+    public func logOut() {
+        
+        CacheManager.shared.deleteName()
+        CacheManager.shared.deleteEmail()
+        
+        FacebookManager.shared.logOut()
+        GoogleManager.shared.logOut()
+        
+        do {
+            try FirebaseAuth.Auth.auth().signOut()
+        }
+        catch {
+            print("Failed to log out")
+        }
+    }
 }
 
 public enum AuthError: Error {

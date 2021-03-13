@@ -30,15 +30,17 @@
 		FA7885EB25F782EC004ED5E2 /* ConversationsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885EA25F782EC004ED5E2 /* ConversationsModels.swift */; };
 		FA7885EE25F78346004ED5E2 /* ChatModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885ED25F78346004ED5E2 /* ChatModels.swift */; };
 		FA7885F125F783A4004ED5E2 /* SearchResultModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885F025F783A4004ED5E2 /* SearchResultModel.swift */; };
-		FA7885F525F78DD3004ED5E2 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885F425F78DD3004ED5E2 /* ProfileViewModel.swift */; };
+		FA7885F525F78DD3004ED5E2 /* ProfileDataVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885F425F78DD3004ED5E2 /* ProfileDataVM.swift */; };
 		FA7885FB25FA3239004ED5E2 /* ConversationsVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885FA25FA3239004ED5E2 /* ConversationsVM.swift */; };
 		FA7885FF25FA3D13004ED5E2 /* AuthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA7885FE25FA3D13004ED5E2 /* AuthManager.swift */; };
 		FA78860225FA46A3004ED5E2 /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78860125FA46A3004ED5E2 /* CacheManager.swift */; };
-		FA78860525FA91F0004ED5E2 /* FacebookVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78860425FA91F0004ED5E2 /* FacebookVM.swift */; };
+		FA78860525FA91F0004ED5E2 /* FacebookManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78860425FA91F0004ED5E2 /* FacebookManager.swift */; };
 		FA78860825FA943F004ED5E2 /* FacebookUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78860725FA943F004ED5E2 /* FacebookUser.swift */; };
 		FA78860C25FA9E72004ED5E2 /* AppUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78860B25FA9E72004ED5E2 /* AppUser.swift */; };
-		FA78861125FAD96D004ED5E2 /* GoogleVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78861025FAD96D004ED5E2 /* GoogleVM.swift */; };
+		FA78861125FAD96D004ED5E2 /* GoogleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78861025FAD96D004ED5E2 /* GoogleManager.swift */; };
 		FA78861825FC202D004ED5E2 /* NewConversationVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78861725FC202D004ED5E2 /* NewConversationVM.swift */; };
+		FA78862125FCF1FC004ED5E2 /* ProfileVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78862025FCF1FC004ED5E2 /* ProfileVM.swift */; };
+		FA78862A25FCFB42004ED5E2 /* ProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78862925FCFB42004ED5E2 /* ProfileTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,15 +70,17 @@
 		FA7885EA25F782EC004ED5E2 /* ConversationsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsModels.swift; sourceTree = "<group>"; };
 		FA7885ED25F78346004ED5E2 /* ChatModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatModels.swift; sourceTree = "<group>"; };
 		FA7885F025F783A4004ED5E2 /* SearchResultModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultModel.swift; sourceTree = "<group>"; };
-		FA7885F425F78DD3004ED5E2 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		FA7885F425F78DD3004ED5E2 /* ProfileDataVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDataVM.swift; sourceTree = "<group>"; };
 		FA7885FA25FA3239004ED5E2 /* ConversationsVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationsVM.swift; sourceTree = "<group>"; };
 		FA7885FE25FA3D13004ED5E2 /* AuthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthManager.swift; sourceTree = "<group>"; };
 		FA78860125FA46A3004ED5E2 /* CacheManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
-		FA78860425FA91F0004ED5E2 /* FacebookVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookVM.swift; sourceTree = "<group>"; };
+		FA78860425FA91F0004ED5E2 /* FacebookManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookManager.swift; sourceTree = "<group>"; };
 		FA78860725FA943F004ED5E2 /* FacebookUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FacebookUser.swift; sourceTree = "<group>"; };
 		FA78860B25FA9E72004ED5E2 /* AppUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUser.swift; sourceTree = "<group>"; };
-		FA78861025FAD96D004ED5E2 /* GoogleVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleVM.swift; sourceTree = "<group>"; };
+		FA78861025FAD96D004ED5E2 /* GoogleManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleManager.swift; sourceTree = "<group>"; };
 		FA78861725FC202D004ED5E2 /* NewConversationVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewConversationVM.swift; sourceTree = "<group>"; };
+		FA78862025FCF1FC004ED5E2 /* ProfileVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVM.swift; sourceTree = "<group>"; };
+		FA78862925FCFB42004ED5E2 /* ProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewCell.swift; sourceTree = "<group>"; };
 		FC082CF22F21C8D12B11AD16 /* Pods_Chat_And_Note.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Chat_And_Note.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -163,6 +167,7 @@
 				FA7884F325DFC245004ED5E2 /* Assets.xcassets */,
 				FA7885C225EEBC50004ED5E2 /* ConversationTableViewCell.swift */,
 				FA7885C525F1751F004ED5E2 /* NewConversationCell.swift */,
+				FA78862925FCFB42004ED5E2 /* ProfileTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -174,7 +179,6 @@
 				FA7885EA25F782EC004ED5E2 /* ConversationsModels.swift */,
 				FA7885ED25F78346004ED5E2 /* ChatModels.swift */,
 				FA7885F025F783A4004ED5E2 /* SearchResultModel.swift */,
-				FA7885F425F78DD3004ED5E2 /* ProfileViewModel.swift */,
 				FA78860725FA943F004ED5E2 /* FacebookUser.swift */,
 			);
 			path = Models;
@@ -184,9 +188,8 @@
 			isa = PBXGroup;
 			children = (
 				FA7885FA25FA3239004ED5E2 /* ConversationsVM.swift */,
-				FA78860425FA91F0004ED5E2 /* FacebookVM.swift */,
-				FA78861025FAD96D004ED5E2 /* GoogleVM.swift */,
 				FA78861725FC202D004ED5E2 /* NewConversationVM.swift */,
+				FA78862325FCF225004ED5E2 /* Profile */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -233,9 +236,28 @@
 				FA78854925E0322A004ED5E2 /* DatabaseManager.swift */,
 				FA7885BF25E45982004ED5E2 /* StorageManager.swift */,
 				FA78860125FA46A3004ED5E2 /* CacheManager.swift */,
-				FA7885FE25FA3D13004ED5E2 /* AuthManager.swift */,
+				FA78862725FCF79B004ED5E2 /* Account */,
 			);
 			path = Managers;
+			sourceTree = "<group>";
+		};
+		FA78862325FCF225004ED5E2 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				FA7885F425F78DD3004ED5E2 /* ProfileDataVM.swift */,
+				FA78862025FCF1FC004ED5E2 /* ProfileVM.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
+		FA78862725FCF79B004ED5E2 /* Account */ = {
+			isa = PBXGroup;
+			children = (
+				FA7885FE25FA3D13004ED5E2 /* AuthManager.swift */,
+				FA78860425FA91F0004ED5E2 /* FacebookManager.swift */,
+				FA78861025FAD96D004ED5E2 /* GoogleManager.swift */,
+			);
+			path = Account;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -390,9 +412,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA78850925DFC909004ED5E2 /* LoginViewController.swift in Sources */,
-				FA78860525FA91F0004ED5E2 /* FacebookVM.swift in Sources */,
-				FA7885F525F78DD3004ED5E2 /* ProfileViewModel.swift in Sources */,
-				FA78861125FAD96D004ED5E2 /* GoogleVM.swift in Sources */,
+				FA78860525FA91F0004ED5E2 /* FacebookManager.swift in Sources */,
+				FA7885F525F78DD3004ED5E2 /* ProfileDataVM.swift in Sources */,
+				FA78861125FAD96D004ED5E2 /* GoogleManager.swift in Sources */,
 				FA7885C625F17520004ED5E2 /* NewConversationCell.swift in Sources */,
 				FA78854A25E0322A004ED5E2 /* DatabaseManager.swift in Sources */,
 				FA7885EE25F78346004ED5E2 /* ChatModels.swift in Sources */,
@@ -411,10 +433,12 @@
 				FA7885C325EEBC50004ED5E2 /* ConversationTableViewCell.swift in Sources */,
 				FA7885A125E4390A004ED5E2 /* ChatViewController.swift in Sources */,
 				FA78851025DFC966004ED5E2 /* PhotoViewerViewController.swift in Sources */,
+				FA78862A25FCFB42004ED5E2 /* ProfileTableViewCell.swift in Sources */,
 				FA78860C25FA9E72004ED5E2 /* AppUser.swift in Sources */,
 				FA7885F125F783A4004ED5E2 /* SearchResultModel.swift in Sources */,
 				FA7885C025E45982004ED5E2 /* StorageManager.swift in Sources */,
 				FA7885EB25F782EC004ED5E2 /* ConversationsModels.swift in Sources */,
+				FA78862125FCF1FC004ED5E2 /* ProfileVM.swift in Sources */,
 				FA7885C925F63F33004ED5E2 /* LocationPickerViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

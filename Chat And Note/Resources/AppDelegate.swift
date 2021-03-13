@@ -56,8 +56,7 @@ extension AppDelegate: GIDSignInDelegate {
         
         print("Did sign in with Google: \(user)")
         
-        let googleVM = GoogleVM()
-        googleVM.signInViaGoogle(for: user)
+        GoogleManager.shared.signIn(for: user)
     }
     
     func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {

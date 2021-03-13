@@ -6,28 +6,25 @@
 //
 
 import UIKit
-import FirebaseAuth
-import FBSDKLoginKit
-import GoogleSignIn
 import SDWebImage
 
 final class ProfileViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
     
-    var data = [ProfileViewModel]()
-    
+    private let profileVM = ProfileVM()
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: ProfileTableViewCell.identifier)
         
-        data.append(ProfileViewModel(viewModelType: .info,
-                                     title: "Name: \(UserDefaults.standard.value(forKey: "name") as? String ?? "No Name")",
-                                     handler: nil))
-        data.append(ProfileViewModel(viewModelType: .info,
-                                     title: "Email: \(UserDefaults.standard.value(forKey: "email") as? String ?? "No Email")",
-                                     handler: nil))
-        data.append(ProfileViewModel(viewModelType: .logout, title: "Log Out",handler: { [weak self] in
+        profileVM.addData(ProfileDataVM(viewModelType: .info,
+                                        title: "Name: \(CacheManager.shared.getName() ?? "No Name")",
+                                        handler: nil))
+        profileVM.addData(ProfileDataVM(viewModelType: .info,
+                                        title: "Email: \(CacheManager.shared.getEmail() ?? "No Email")",
+                                        handler: nil))
+        profileVM.addData(ProfileDataVM(viewModelType: .logout, title: "Log Out",handler: { [weak self] in
             
             guard let strongSelf = self else {
                 return
@@ -44,26 +41,12 @@ final class ProfileViewController: UIViewController {
                                                         return
                                                     }
                                                     
-                                                    UserDefaults.standard.setValue(nil, forKey: "email")
-                                                    UserDefaults.standard.setValue(nil, forKey: "name")
+                                                    AuthManager.shared.logOut()
                                                     
-                                                    // Log Out facebook
-                                                    FBSDKLoginKit.LoginManager().logOut()
-                                                    
-                                                    // Google Log out
-                                                    GIDSignIn.sharedInstance()?.signOut()
-                                                    
-                                                    do {
-                                                        try FirebaseAuth.Auth.auth().signOut()
-                                                        
-                                                        let vc = LoginViewController()
-                                                        let nav = UINavigationController(rootViewController: vc)
-                                                        nav.modalPresentationStyle = .fullScreen
-                                                        strongSelf.present(nav, animated: true)
-                                                    }
-                                                    catch {
-                                                        print("Failed to log out")
-                                                    }
+                                                    let vc = LoginViewController()
+                                                    let nav = UINavigationController(rootViewController: vc)
+                                                    nav.modalPresentationStyle = .fullScreen
+                                                    strongSelf.present(nav, animated: true)
                                                     
                                                 }))
             
@@ -82,7 +65,7 @@ final class ProfileViewController: UIViewController {
     }
     
     func createTableHeader() -> UIView? {
-        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
+        guard let email = CacheManager.shared.getEmail() else {
             return nil
         }
         
@@ -123,11 +106,11 @@ final class ProfileViewController: UIViewController {
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data.count
+        return profileVM.getNumberOfDataItems()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let viewModel = data[indexPath.row]
+        let viewModel = profileVM.getProfileDataVM(forIndexPath: indexPath)
         
         let cell = tableView.dequeueReusableCell(withIdentifier: ProfileTableViewCell.identifier, for: indexPath) as! ProfileTableViewCell
         cell.setUp(with: viewModel)
@@ -136,24 +119,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        data[indexPath.row].handler?()
+        profileVM.getProfileDataVM(forIndexPath: indexPath).handler?()
     }
-}
-
-class ProfileTableViewCell: UITableViewCell {
-
-    static let identifier = "ProfileTableViewCell"
-
-    public func setUp(with viewModel: ProfileViewModel) {
-        textLabel?.text = viewModel.title
-        switch viewModel.viewModelType {
-        case .info:
-            textLabel?.textAlignment = .left
-            selectionStyle = .none
-        case .logout:
-            textLabel?.textColor = .red
-            textLabel?.textAlignment = .center
-        }
-    }
-
 }

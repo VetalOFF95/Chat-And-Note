@@ -226,8 +226,7 @@ extension LoginViewController: LoginButtonDelegate {
             return
         }
         
-        let facebookVM = FacebookVM()
-        facebookVM.signInViaFacebook(with: token) { [weak self] result in
+        FacebookManager.shared.signIn(with: token) { [weak self] result in
             switch result {
             case .success(_):
                 self?.navigationController?.dismiss(animated: true, completion: nil)

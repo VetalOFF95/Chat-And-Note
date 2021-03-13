@@ -1,5 +1,5 @@
 //
-//  GoogleVM.swift
+//  GoogleManager.swift
 //  Chat And Note
 //
 //  Created by  Vitalii on 12.03.2021.
@@ -8,9 +8,13 @@
 import Foundation
 import GoogleSignIn
 
-class GoogleVM {
+class GoogleManager {
     
-    public func signInViaGoogle(for user: GIDGoogleUser) {
+    /// Shared instance of class
+    static let shared = GoogleManager()
+    private init() {}
+    
+    public func signIn(for user: GIDGoogleUser) {
         
         guard let email = user.profile.email,
               let firstName = user.profile.givenName,
@@ -31,7 +35,7 @@ class GoogleVM {
                 DatabaseManager.shared.insertUser(with: appUser, completion: { success in
                     if success && user.profile.hasImage {
                         if let url = user.profile.imageURL(withDimension: 200) {
-                            insertGoogleUserPicture(user: appUser, imageURL: url)
+                            self.insertGoogleUserPicture(user: appUser, imageURL: url)
                         }
                     }
                 })
@@ -56,22 +60,25 @@ class GoogleVM {
         }        
     }
     
-}
-
-private func insertGoogleUserPicture(user: AppUser, imageURL: URL) {
-    
-    URLSession.shared.dataTask(with: imageURL, completionHandler: { data, _, _ in
-        guard let data = data else {
-            return
-        }
+    private func insertGoogleUserPicture(user: AppUser, imageURL: URL) {
         
-        StorageManager.shared.uploadProfilePicture(with: data, fileName: user.profilePictureFileName) { result in
-            switch result {
-            case .success(let downloadUrl):
-                CacheManager.shared.saveProfilePictureURL(url: downloadUrl)
-            case .failure(let error):
-                print("Storage manager error: \(error)")
+        URLSession.shared.dataTask(with: imageURL, completionHandler: { data, _, _ in
+            guard let data = data else {
+                return
             }
-        }
-    }).resume()
+            
+            StorageManager.shared.uploadProfilePicture(with: data, fileName: user.profilePictureFileName) { result in
+                switch result {
+                case .success(let downloadUrl):
+                    CacheManager.shared.saveProfilePictureURL(url: downloadUrl)
+                case .failure(let error):
+                    print("Storage manager error: \(error)")
+                }
+            }
+        }).resume()
+    }
+    
+    public func logOut() {
+        GIDSignIn.sharedInstance()?.signOut()
+    }
 }

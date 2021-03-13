@@ -1,5 +1,5 @@
 //
-//  FacebookVM.swift
+//  FacebookManager.swift
 //  Chat And Note
 //
 //  Created by  Vitalii on 11.03.2021.
@@ -8,9 +8,13 @@
 import Foundation
 import FBSDKLoginKit
 
-class FacebookVM {
+class FacebookManager {
     
-    public func signInViaFacebook(with token: String, completion: @escaping (Result<Any, Error>) -> Void) {
+    /// Shared instance of class
+    static let shared = FacebookManager()
+    private init() {}
+    
+    public func signIn(with token: String, completion: @escaping (Result<Any, Error>) -> Void) {
         let facebookRequest = FBSDKLoginKit.GraphRequest(graphPath: "me",
                                                          parameters: ["fields":
                                                                         "email, first_name, last_name, picture.type(large)"],
@@ -92,5 +96,9 @@ class FacebookVM {
                 }
             }
         }).resume()
+    }
+    
+    public func logOut() {
+        FBSDKLoginKit.LoginManager().logOut()
     }
 }

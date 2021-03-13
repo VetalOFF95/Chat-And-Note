@@ -37,4 +37,12 @@ class CacheManager {
     public func getEmail() -> String? {
         return UserDefaults.standard.value(forKey: "email") as? String
     }
+    
+    public func deleteName() {
+        UserDefaults.standard.setValue(nil, forKey: "name")
+    }
+    
+    public func deleteEmail() {
+        UserDefaults.standard.setValue(nil, forKey: "email")
+    }
 }
