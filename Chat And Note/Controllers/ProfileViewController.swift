@@ -16,7 +16,12 @@ final class ProfileViewController: UIViewController {
         
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.tableHeaderView = createTableHeader()
         tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: ProfileTableViewCell.identifier)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
         profileVM.addData(ProfileDataVM(viewModelType: .info,
                                         title: "Name: \(CacheManager.shared.getName() ?? "No Name")",
@@ -56,12 +61,6 @@ final class ProfileViewController: UIViewController {
             
             strongSelf.present(actionSheet, animated: true)
         }))
-        
-        tableView.register(UITableViewCell.self,
-                           forCellReuseIdentifier: "cell")
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.tableHeaderView = createTableHeader()
     }
     
     func createTableHeader() -> UIView? {
