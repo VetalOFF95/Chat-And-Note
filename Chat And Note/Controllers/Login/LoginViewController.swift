@@ -172,18 +172,33 @@ final class LoginViewController: UIViewController {
         spinner.show(in: view)
         
         // Firebase Log In
-        AuthManager.shared.logIn(with: email, password: password) { [weak self] result in
-            
-            DispatchQueue.main.async {
-                self?.spinner.dismiss()
-            }
-            
-            switch result {
-            case .success(_):
-                self?.navigationController?.dismiss(animated: true, completion: nil)
-            case .failure(let error):
-                print("Failed to read data with error \(error)")
-            }
+//        AuthManager.shared.logIn(with: email, password: password) { [weak self] result in
+//
+//            DispatchQueue.main.async {
+//                self?.spinner.dismiss()
+//            }
+//
+//            switch result {
+//            case .success(_):
+//                self?.navigationController?.dismiss(animated: true, completion: nil)
+//            case .failure(let error):
+//                print("Failed to read data with error \(error)")
+//            }
+//        }
+        
+        AuthManager.shared.logIn(with: email, password: password, completion: loginCompletion)
+    }
+    
+    private func loginCompletion(result: Result<Any, Error>) {
+        DispatchQueue.main.async {
+            self.spinner.dismiss()
+        }
+        
+        switch result {
+        case .success(_):
+            navigationController?.dismiss(animated: true, completion: nil)
+        case .failure(let error):
+            print("Failed to read data with error \(error)")
         }
     }
     

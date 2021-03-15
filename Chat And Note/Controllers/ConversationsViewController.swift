@@ -12,7 +12,8 @@ import JGProgressHUD
 final class ConversationsViewController: UIViewController {
     
     private let spinner = JGProgressHUD(style: .dark)
-    private let conversationsVM = ConversationsVM()
+    private var conversationsVM = ConversationsVM()
+    private var presentedUserEmail: String?
     
     private let tableView: UITableView = {
         let table = UITableView()
@@ -42,29 +43,6 @@ final class ConversationsViewController: UIViewController {
         
         tableView.delegate = self
         tableView.dataSource = self
-        
-        conversationsVM.startListeningForConversations { [weak self] result in
-            switch result {
-            case .success(let conversations):
-                print("Successfully got conversation models")
-                guard !conversations.isEmpty else {
-                    self?.tableView.isHidden = true
-                    self?.noConversationsLabel.isHidden = false
-                    return
-                }
-                self?.noConversationsLabel.isHidden = true
-                self?.tableView.isHidden = false
-                
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()
-                }
-            case .failure(let error):
-                print("Failed to get conversations: \(error)")
-                self?.tableView.isHidden = true
-                self?.noConversationsLabel.isHidden = false
-            }
-        }
-        conversationsVM.addLoginObserver()
     }
     
     override func viewDidLayoutSubviews() {
@@ -76,9 +54,42 @@ final class ConversationsViewController: UIViewController {
                                             height: 100)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        validateAuth()
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        validateAuth()
+        
+        let currentUserEmail = CacheManager.shared.getEmail()
+        if presentedUserEmail != currentUserEmail {
+            conversationsVM = ConversationsVM()
+            conversationsVM.startListeningForConversations { [weak self] result in
+                switch result {
+                case .success(let conversations):
+                    print("Successfully got conversation models")
+                    guard !conversations.isEmpty else {
+                        self?.tableView.isHidden = true
+                        self?.noConversationsLabel.isHidden = false
+                        return
+                    }
+                    self?.noConversationsLabel.isHidden = true
+                    self?.tableView.isHidden = false
+                    
+                    DispatchQueue.main.async {
+                        self?.tableView.reloadData()
+                    }
+                case .failure(let error):
+                    print("Failed to get conversations: \(error)")
+                    self?.tableView.isHidden = true
+                    self?.noConversationsLabel.isHidden = false
+                }
+            }
+            conversationsVM.addLoginObserver()
+            
+            presentedUserEmail = currentUserEmail
+        }
     }
     
     @objc private func didTapComposeButton() {
@@ -118,6 +129,7 @@ final class ConversationsViewController: UIViewController {
     }
 }
 
+//MARK: - Table View
 extension ConversationsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

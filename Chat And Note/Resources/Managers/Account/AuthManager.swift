@@ -39,16 +39,14 @@ class AuthManager {
                         return
                     }
                     CacheManager.shared.saveFullName(firstName: firstName, lastName: lastName)
+                    CacheManager.shared.saveEmail(email: email)
+                    print("Logged In User: \(user)")
+                    completion(.success(user))
                 case .failure(let error):
                     completion(.failure(error))
                 }
             })
-            
-            CacheManager.shared.saveEmail(email: email)
-            print("Logged In User: \(user)")
-            completion(.success(user))
         })
-        
     }
     
     public func logInWithFacebook(with token: String, completion: @escaping (Result<Any, Error>) -> Void) {
