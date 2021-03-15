@@ -42,6 +42,7 @@
 		FA78862125FCF1FC004ED5E2 /* ProfileVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78862025FCF1FC004ED5E2 /* ProfileVM.swift */; };
 		FA78862A25FCFB42004ED5E2 /* ProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78862925FCFB42004ED5E2 /* ProfileTableViewCell.swift */; };
 		FA78862D25FE17E5004ED5E2 /* ChatVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78862C25FE17E5004ED5E2 /* ChatVM.swift */; };
+		FA78863225FF7FF4004ED5E2 /* DatabaseError.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78863125FF7FF4004ED5E2 /* DatabaseError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -83,6 +84,7 @@
 		FA78862025FCF1FC004ED5E2 /* ProfileVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileVM.swift; sourceTree = "<group>"; };
 		FA78862925FCFB42004ED5E2 /* ProfileTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTableViewCell.swift; sourceTree = "<group>"; };
 		FA78862C25FE17E5004ED5E2 /* ChatVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatVM.swift; sourceTree = "<group>"; };
+		FA78863125FF7FF4004ED5E2 /* DatabaseError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseError.swift; sourceTree = "<group>"; };
 		FC082CF22F21C8D12B11AD16 /* Pods_Chat_And_Note.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Chat_And_Note.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -201,6 +203,7 @@
 				FA7884EA25DFC243004ED5E2 /* AppDelegate.swift */,
 				FA7884EC25DFC243004ED5E2 /* SceneDelegate.swift */,
 				FA78852325DFD4A6004ED5E2 /* Extensions.swift */,
+				FA78863125FF7FF4004ED5E2 /* DatabaseError.swift */,
 				FA78861525FC0524004ED5E2 /* Managers */,
 			);
 			path = Resources;
@@ -439,6 +442,7 @@
 				FA7884EB25DFC243004ED5E2 /* AppDelegate.swift in Sources */,
 				FA78860225FA46A3004ED5E2 /* CacheManager.swift in Sources */,
 				FA78851A25DFC9C2004ED5E2 /* ProfileViewController.swift in Sources */,
+				FA78863225FF7FF4004ED5E2 /* DatabaseError.swift in Sources */,
 				FA7885FF25FA3D13004ED5E2 /* AuthManager.swift in Sources */,
 				FA7884ED25DFC243004ED5E2 /* SceneDelegate.swift in Sources */,
 				FA7885C325EEBC50004ED5E2 /* ConversationTableViewCell.swift in Sources */,
