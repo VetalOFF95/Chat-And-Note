@@ -103,19 +103,23 @@ extension NewConversationViewController: UITableViewDelegate, UITableViewDataSou
 
 //MARK: - SearchBar
 extension NewConversationViewController: UISearchBarDelegate {
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        guard let text = searchBar.text, !text.replacingOccurrences(of: " ", with: "").isEmpty else {
-            return
+        
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchText.count != 0 {
+            guard let text = searchBar.text, !text.replacingOccurrences(of: " ", with: "").isEmpty else {
+                return
+            }
+            
+            newConversationVM.removeAllSearchResults()
+            spinner.show(in: view)
+            
+            newConversationVM.searchUsers(with: text, completion: updateUI)
+            spinner.dismiss()
+        } else {
+            newConversationVM.removeAllSearchResults()
+            updateUI()
         }
         
-        searchBar.resignFirstResponder()
-        
-        newConversationVM.removeAllSearchResults()
-        spinner.show(in: view)
-        
-        newConversationVM.searchUsers(with: text, completion: updateUI)
-        spinner.dismiss()
     }
     
     func updateUI() {
