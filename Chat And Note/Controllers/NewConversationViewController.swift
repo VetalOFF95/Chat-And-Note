@@ -119,7 +119,6 @@ extension NewConversationViewController: UISearchBarDelegate {
             newConversationVM.removeAllSearchResults()
             updateUI()
         }
-        
     }
     
     func updateUI() {

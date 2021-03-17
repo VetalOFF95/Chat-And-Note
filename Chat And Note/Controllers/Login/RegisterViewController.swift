@@ -105,6 +105,7 @@ final class RegisterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.hideKeyboardWhenTappedAround() 
         
         title = "Register"
         view.backgroundColor = .systemBackground

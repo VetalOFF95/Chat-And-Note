@@ -138,12 +138,12 @@
 		FA7884E925DFC243004ED5E2 /* Chat And Note */ = {
 			isa = PBXGroup;
 			children = (
-				FA7885F925FA30FB004ED5E2 /* Protocols */,
-				FA78850325DFC791004ED5E2 /* Resources */,
-				FA78850225DFC782004ED5E2 /* ViewModels */,
 				FA78850125DFC77B004ED5E2 /* Models */,
+				FA78850225DFC782004ED5E2 /* ViewModels */,
+				FA78861525FC0524004ED5E2 /* Managers */,
 				FA78850025DFC773004ED5E2 /* Views */,
 				FA7884FF25DFC76A004ED5E2 /* Controllers */,
+				FA78850325DFC791004ED5E2 /* Resources */,
 				FA7884F825DFC245004ED5E2 /* Info.plist */,
 				FA78853725E00C19004ED5E2 /* GoogleService-Info.plist */,
 			);
@@ -153,11 +153,11 @@
 		FA7884FF25DFC76A004ED5E2 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				FA7884EE25DFC243004ED5E2 /* ConversationsViewController.swift */,
 				FA78851C25DFCA9F004ED5E2 /* Login */,
+				FA78862F25FE1FF2004ED5E2 /* Chat */,
+				FA7884EE25DFC243004ED5E2 /* ConversationsViewController.swift */,
 				FA78851625DFC9A4004ED5E2 /* NewConversationViewController.swift */,
 				FA78851925DFC9C2004ED5E2 /* ProfileViewController.swift */,
-				FA78862F25FE1FF2004ED5E2 /* Chat */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -204,7 +204,6 @@
 				FA7884EC25DFC243004ED5E2 /* SceneDelegate.swift */,
 				FA78852325DFD4A6004ED5E2 /* Extensions.swift */,
 				FA78863125FF7FF4004ED5E2 /* DatabaseError.swift */,
-				FA78861525FC0524004ED5E2 /* Managers */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -225,13 +224,6 @@
 				FA78850B25DFC931004ED5E2 /* RegisterViewController.swift */,
 			);
 			path = Login;
-			sourceTree = "<group>";
-		};
-		FA7885F925FA30FB004ED5E2 /* Protocols */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Protocols;
 			sourceTree = "<group>";
 		};
 		FA78861525FC0524004ED5E2 /* Managers */ = {
