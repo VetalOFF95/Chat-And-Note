@@ -7,12 +7,12 @@
 
 import Foundation
 
-enum ProfileViewModelType {
+enum ProfileDataViewModelType {
     case info, logout
 }
 
-struct ProfileViewModel {
-    let viewModelType: ProfileViewModelType
+struct ProfileDataVM {
+    let viewModelType: ProfileDataViewModelType
     let title: String
     let handler: (() -> Void)?
 }

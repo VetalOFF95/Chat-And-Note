@@ -15,25 +15,26 @@ import CoreLocation
 
 final class ChatViewController: MessagesViewController {
     
+    private let chatVM = ChatVM()
     private var senderPhotoURL: URL?
     private var otherUserPhotoURL: URL?
     
     public static let dateFormatter: DateFormatter = {
-        let formattre = DateFormatter()
-        formattre.dateStyle = .medium
-        formattre.timeStyle = .long
-        formattre.locale = .current
-        return formattre
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .long
+        formatter.locale = .current
+        return formatter
     }()
     
     public let otherUserEmail: String
-    private var conversationId: String?
+    public var conversationId: String?
     public var isNewConversation = false
     
-    private var messages = [Message]()
+//    private var messages = [Message]()
     
     private var selfSender: Sender? {
-        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
+        guard let email = CacheManager.shared.getEmail() else {
             return nil
         }
         let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
@@ -62,7 +63,40 @@ final class ChatViewController: MessagesViewController {
         messagesCollectionView.messagesDisplayDelegate = self
         messagesCollectionView.messageCellDelegate = self
         messageInputBar.delegate = self
+        
         setupInputButton()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        messageInputBar.inputTextView.becomeFirstResponder()
+        if let conversationId = conversationId {
+            listenForMessages(id: conversationId, shouldScrollToBottom: true)
+        }
+    }
+    
+    private func listenForMessages(id: String, shouldScrollToBottom: Bool) {
+        DatabaseManager.shared.getAllMessagesForConversation(with: id, completion: { [weak self] result in
+            switch result {
+            case .success(let messages):
+                print("success in getting messages: \(messages)")
+                guard !messages.isEmpty else {
+                    print("Messages are empty")
+                    return
+                }
+                self?.chatVM.setMessages(messages)
+                
+                DispatchQueue.main.async {
+                    self?.messagesCollectionView.reloadDataAndKeepOffset()
+                    
+                    if shouldScrollToBottom {
+                        self?.messagesCollectionView.scrollToBottom()
+                    }
+                }
+            case .failure(let error):
+                print("failed to get messages: \(error)")
+            }
+        })
     }
     
     private func setupInputButton() {
@@ -88,9 +122,6 @@ final class ChatViewController: MessagesViewController {
         actionSheet.addAction(UIAlertAction(title: "Video", style: .default, handler: { [weak self] _ in
             self?.presentVideoInputActionSheet()
         }))
-        actionSheet.addAction(UIAlertAction(title: "Audio", style: .default, handler: {  _ in
-            
-        }))
         actionSheet.addAction(UIAlertAction(title: "Location", style: .default, handler: { [weak self] _ in
             self?.presentLocationPicker()
         }))
@@ -99,6 +130,62 @@ final class ChatViewController: MessagesViewController {
         present(actionSheet, animated: true)
     }
     
+    //MARK: - Input actions
+    private func presentPhotoInputActionSheet() {
+        let actionSheet = UIAlertController(title: "Attach Photo",
+                                            message: "Where would you like to attach a photo from?",
+                                            preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Camera", style: .default, handler: { [weak self] _ in
+            let picker = UIImagePickerController()
+            picker.sourceType = .camera
+            picker.delegate = self
+            picker.allowsEditing = true
+            
+            self?.present(picker, animated: true)
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Photo Library", style: .default, handler: { [weak self] _ in
+            let picker = UIImagePickerController()
+            picker.sourceType = .photoLibrary
+            picker.delegate = self
+            picker.allowsEditing = true
+            
+            self?.present(picker, animated: true)
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil ))
+        
+        present(actionSheet, animated: true)
+    }
+    
+    private func presentVideoInputActionSheet() {
+        let actionSheet = UIAlertController(title: "Attach Video",
+                                            message: "Where would you like to attach a video from?",
+                                            preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Camera", style: .default, handler: { [weak self] _ in
+            let picker = UIImagePickerController()
+            picker.sourceType = .camera
+            picker.delegate = self
+            picker.mediaTypes = ["public.movie"]
+            picker.videoQuality = .typeMedium
+            picker.allowsEditing = true
+            
+            self?.present(picker, animated: true)
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Library", style: .default, handler: { [weak self] _ in
+            let picker = UIImagePickerController()
+            picker.sourceType = .photoLibrary
+            picker.delegate = self
+            picker.mediaTypes = ["public.movie"]
+            picker.videoQuality = .typeMedium
+            picker.allowsEditing = true
+            
+            self?.present(picker, animated: true)
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil ))
+        
+        present(actionSheet, animated: true)
+    }
+    
+    //MARK: - Location picker
     private func presentLocationPicker() {
         let vc = LocationPickerViewController(coordinates: nil)
         vc.title = "Pick Location"
@@ -139,107 +226,9 @@ final class ChatViewController: MessagesViewController {
         }
         navigationController?.pushViewController(vc, animated: true)
     }
-    
-    private func presentPhotoInputActionSheet() {
-        let actionSheet = UIAlertController(title: "Attach Photo",
-                                            message: "Where would you like to attach a photo from?",
-                                            preferredStyle: .actionSheet)
-        
-        actionSheet.addAction(UIAlertAction(title: "Camera", style: .default, handler: { [weak self] _ in
-            
-            let picker = UIImagePickerController()
-            picker.sourceType = .camera
-            picker.delegate = self
-            picker.allowsEditing = true
-            
-            self?.present(picker, animated: true)
-            
-            
-        }))
-        actionSheet.addAction(UIAlertAction(title: "Photo Library", style: .default, handler: { [weak self] _ in
-            
-            let picker = UIImagePickerController()
-            picker.sourceType = .photoLibrary
-            picker.delegate = self
-            picker.allowsEditing = true
-            
-            self?.present(picker, animated: true)
-            
-        }))
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil ))
-        
-        present(actionSheet, animated: true)
-    }
-    
-    private func presentVideoInputActionSheet() {
-        let actionSheet = UIAlertController(title: "Attach Video",
-                                            message: "Where would you like to attach a video from?",
-                                            preferredStyle: .actionSheet)
-        
-        actionSheet.addAction(UIAlertAction(title: "Camera", style: .default, handler: { [weak self] _ in
-            
-            let picker = UIImagePickerController()
-            picker.sourceType = .camera
-            picker.delegate = self
-            picker.mediaTypes = ["public.movie"]
-            picker.videoQuality = .typeMedium
-            picker.allowsEditing = true
-            
-            self?.present(picker, animated: true)
-            
-            
-        }))
-        actionSheet.addAction(UIAlertAction(title: "Library", style: .default, handler: { [weak self] _ in
-            
-            let picker = UIImagePickerController()
-            picker.sourceType = .photoLibrary
-            picker.delegate = self
-            picker.mediaTypes = ["public.movie"]
-            picker.videoQuality = .typeMedium
-            picker.allowsEditing = true
-            
-            self?.present(picker, animated: true)
-            
-        }))
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil ))
-        
-        present(actionSheet, animated: true)
-    }
-    
-    private func listenForMessages(id: String, shouldScrollToBottom: Bool) {
-        DatabaseManager.shared.getAllMessagesForConversation(with: id, completion: { [weak self] result in
-            switch result {
-            case .success(let messages):
-                print("success in getting messages: \(messages)")
-                guard !messages.isEmpty else {
-                    print("messages are empty")
-                    return
-                }
-                self?.messages = messages
-                
-                DispatchQueue.main.async {
-                    self?.messagesCollectionView.reloadDataAndKeepOffset()
-                    
-                    if shouldScrollToBottom {
-                        self?.messagesCollectionView.scrollToBottom()
-                    }
-                }
-            case .failure(let error):
-                print("failed to get messages: \(error)")
-            }
-        })
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        messageInputBar.inputTextView.becomeFirstResponder()
-        if let conversationId = conversationId {
-            listenForMessages(id: conversationId, shouldScrollToBottom: true)
-        }
-    }
-    
 }
 
+//MARK: - Image Picker
 extension ChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
@@ -353,6 +342,7 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
     
 }
 
+//MARK: - Input Bar
 extension ChatViewController: InputBarAccessoryViewDelegate {
     
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
@@ -407,7 +397,7 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     
     private func createMessageId() -> String? {
         // date, otherUesrEmail, senderEmail, randomInt
-        guard let currentUserEmail = UserDefaults.standard.value(forKey: "email") as? String else {
+        guard let currentUserEmail = CacheManager.shared.getEmail() else {
             return nil
         }
         
@@ -416,28 +406,28 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         let dateString = Self.dateFormatter.string(from: Date())
         let newIdentifier = "\(otherUserEmail)_\(safeCurrentEmail)_\(dateString)"
         
-        print("created message id: \(newIdentifier)")
+        print("Created message id: \(newIdentifier)")
         
         return newIdentifier
     }
     
 }
 
+//MARK: - Messages presenting
 extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate {
     func currentSender() -> SenderType {
         if let sender = selfSender {
             return sender
         }
-        
         fatalError("Self Sender is nil, email should be cached")
     }
     
     func messageForItem(at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> MessageType {
-        return messages[indexPath.section]
+        return chatVM.getMessage(forIndexPath: indexPath)
     }
     
     func numberOfSections(in messagesCollectionView: MessagesCollectionView) -> Int {
-        return messages.count
+        return chatVM.getNumberOfMessages()
     }
     
     func configureMediaMessageImageView(_ imageView: UIImageView, for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) {
@@ -461,7 +451,7 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
         let sender = message.sender
         
         if sender.senderId == selfSender?.senderId {
-            // my message
+            // Sender message
             return .link
         }
         
@@ -478,7 +468,7 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
                 avatarView.sd_setImage(with: currentUserImageURL, completed: nil)
             } else {
                 // fetch url
-                guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
+                guard let email = CacheManager.shared.getEmail() else {
                     return
                 }
                 
@@ -526,6 +516,7 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
     }
 }
 
+//MARK: - Messages interactions
 extension ChatViewController: MessageCellDelegate {
     
     func didTapMessage(in cell: MessageCollectionViewCell) {
@@ -533,7 +524,7 @@ extension ChatViewController: MessageCellDelegate {
             return
         }
 
-        let message = messages[indexPath.section]
+        let message = chatVM.getMessage(forIndexPath: indexPath)
 
         switch message.kind {
         case .location(let locationData):
@@ -553,7 +544,7 @@ extension ChatViewController: MessageCellDelegate {
             return
         }
         
-        let message = messages[indexPath.section]
+        let message = chatVM.getMessage(forIndexPath: indexPath)
         
         switch message.kind {
         case .photo(let media):

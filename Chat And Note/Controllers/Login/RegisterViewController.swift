@@ -105,11 +105,10 @@ final class RegisterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.hideKeyboardWhenTappedAround() 
         
-        title = "Log In"
+        title = "Register"
         view.backgroundColor = .systemBackground
-        
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Register", style: .done, target: self, action: #selector(didTapRegister))
         
         registerButton.addTarget(self,
                                  action: #selector(registerButtonTapped),
@@ -189,68 +188,34 @@ final class RegisterViewController: UIViewController {
               !firstName.isEmpty,
               !lastName.isEmpty,
               password.count >= 6 else {
-            alertUserLoginError()
+            alertAuthError()
             return
         }
         
+        let appUser = AppUser(firstName: firstName,
+                              lastName: lastName,
+                              emailAddress: email)
+        
         spinner.show(in: view)
         
-        DatabaseManager.shared.userExists(with: email) { [weak self] (exists) in
-            
-            guard let strongSelf = self else {
-                return
-            }
+        AuthManager.shared.register(user: appUser,
+                                    password: password,
+                                    image: imageView.image) { [weak self] result in
             
             DispatchQueue.main.async {
-                strongSelf.spinner.dismiss()
+                self?.spinner.dismiss()
             }
             
-            guard !exists else {
-                strongSelf.alertUserLoginError(message: "Looks like a user account for that email adress already exists.")
-                return
+            switch result {
+            case .success(_):
+                self?.navigationController?.dismiss(animated: true, completion: nil)
+            case .failure(let error):
+                self?.alertAuthError(message: error.localizedDescription)
             }
-            
-            // Firebase Register
-            FirebaseAuth.Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
-                
-                guard authResult != nil, error == nil else {
-                    print("Error creating user")
-                    return
-                }
-                
-                UserDefaults.standard.setValue(email, forKey: "email")
-                UserDefaults.standard.setValue("\(firstName) \(lastName)", forKey: "name")
-                
-                let chatUser = ChatAppUser(firstName: firstName,
-                                           lastName: lastName,
-                                           emailAddress: email)
-                DatabaseManager.shared.insertUser(with: chatUser, completion: { success in
-                    if success {
-                        // upload image
-                        guard let image = strongSelf.imageView.image,
-                              let data = image.pngData() else {
-                            return
-                        }
-                        let filename = chatUser.profilePictureFileName
-                        StorageManager.shared.uploadProfilePicture(with: data, fileName: filename, completion: { result in
-                            switch result {
-                            case .success(let downloadUrl):
-                                UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
-                                print(downloadUrl)
-                            case .failure(let error):
-                                print("Storage manager error: \(error)")
-                            }
-                        })
-                    }
-                })
-                
-                strongSelf.navigationController?.dismiss(animated: true, completion: nil)
-            }
-            
         }
     }
     
-    func alertUserLoginError(message: String = "Please enter all information to create a new account.") {
+    func alertAuthError(message: String = "Please enter all information to create a new account.") {
         let alert = UIAlertController(title: "Woops",
                                       message: message,
                                       preferredStyle: .alert)
@@ -293,18 +258,13 @@ extension RegisterViewController: UIImagePickerControllerDelegate, UINavigationC
         actionSheet.addAction(UIAlertAction(title: "Take Photo",
                                             style: .default,
                                             handler: { [weak self] _ in
-                                                
                                                 self?.presentCamera()
-                                                
                                             }))
         actionSheet.addAction(UIAlertAction(title: "Chose Photo",
                                             style: .default,
                                             handler: { [weak self] _ in
-                                                
                                                 self?.presentPhotoPicker()
-                                                
                                             }))
-        
         present(actionSheet, animated: true)
     }
     

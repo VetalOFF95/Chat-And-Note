@@ -6,28 +6,82 @@
 //
 
 import UIKit
-import FirebaseAuth
-import FBSDKLoginKit
-import GoogleSignIn
 import SDWebImage
 
 final class ProfileViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
     
-    var data = [ProfileViewModel]()
+    private var presentedUserEmail: String?
     
+    private var profileVM = ProfileVM()
+    
+    private let headerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .link
+        return view
+    }()
+    
+    private let imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = .white
+        imageView.layer.borderColor = UIColor.white.cgColor
+        imageView.layer.borderWidth = 3
+        imageView.layer.masksToBounds = true
+        return imageView
+    }()
+        
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: ProfileTableViewCell.identifier)
         
-        data.append(ProfileViewModel(viewModelType: .info,
-                                     title: "Name: \(UserDefaults.standard.value(forKey: "name") as? String ?? "No Name")",
-                                     handler: nil))
-        data.append(ProfileViewModel(viewModelType: .info,
-                                     title: "Email: \(UserDefaults.standard.value(forKey: "email") as? String ?? "No Email")",
-                                     handler: nil))
-        data.append(ProfileViewModel(viewModelType: .logout, title: "Log Out",handler: { [weak self] in
+        headerView.addSubview(imageView)
+        
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.tableHeaderView = headerView
+        tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: ProfileTableViewCell.identifier)
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        
+        presentedUserEmail = CacheManager.shared.getEmail()
+        prepareProfileData()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        headerView.frame = CGRect(x: 0,
+                                  y: 0,
+                                  width: view.width,
+                                  height: 300)
+        imageView.frame = CGRect(x: (headerView.width-150) / 2,
+                                 y: 75,
+                                 width: 150,
+                                 height: 150)
+        imageView.layer.cornerRadius = imageView.width/2
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        let currentUserEmail = CacheManager.shared.getEmail()
+        if presentedUserEmail != currentUserEmail {
+            prepareProfileData()
+            tableView.reloadData()
+            presentedUserEmail = currentUserEmail
+        }
+    }
+    
+    private func prepareProfileData() {
+        profileVM = ProfileVM()
+        
+        profileVM.addData(ProfileDataVM(viewModelType: .info,
+                                        title: "Name: \(CacheManager.shared.getName() ?? "No Name")",
+                                        handler: nil))
+        profileVM.addData(ProfileDataVM(viewModelType: .info,
+                                        title: "Email: \(CacheManager.shared.getEmail() ?? "No Email")",
+                                        handler: nil))
+        profileVM.addData(ProfileDataVM(viewModelType: .logout, title: "Log Out",handler: { [weak self] in
             
             guard let strongSelf = self else {
                 return
@@ -44,26 +98,12 @@ final class ProfileViewController: UIViewController {
                                                         return
                                                     }
                                                     
-                                                    UserDefaults.standard.setValue(nil, forKey: "email")
-                                                    UserDefaults.standard.setValue(nil, forKey: "name")
+                                                    AuthManager.shared.logOut()
                                                     
-                                                    // Log Out facebook
-                                                    FBSDKLoginKit.LoginManager().logOut()
-                                                    
-                                                    // Google Log out
-                                                    GIDSignIn.sharedInstance()?.signOut()
-                                                    
-                                                    do {
-                                                        try FirebaseAuth.Auth.auth().signOut()
-                                                        
-                                                        let vc = LoginViewController()
-                                                        let nav = UINavigationController(rootViewController: vc)
-                                                        nav.modalPresentationStyle = .fullScreen
-                                                        strongSelf.present(nav, animated: true)
-                                                    }
-                                                    catch {
-                                                        print("Failed to log out")
-                                                    }
+                                                    let vc = LoginViewController()
+                                                    let nav = UINavigationController(rootViewController: vc)
+                                                    nav.modalPresentationStyle = .fullScreen
+                                                    strongSelf.present(nav, animated: true)
                                                     
                                                 }))
             
@@ -74,60 +114,36 @@ final class ProfileViewController: UIViewController {
             strongSelf.present(actionSheet, animated: true)
         }))
         
-        tableView.register(UITableViewCell.self,
-                           forCellReuseIdentifier: "cell")
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.tableHeaderView = createTableHeader()
+        fillTableHeader()
     }
     
-    func createTableHeader() -> UIView? {
-        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
-            return nil
+    func fillTableHeader() {
+        guard let email = CacheManager.shared.getEmail() else {
+            return
         }
         
         let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
         let filename = safeEmail + "_profile_picture.png"
         let path = "images/"+filename
-        
-        let headerView = UIView(frame: CGRect(x: 0,
-                                              y: 0,
-                                              width: view.width,
-                                              height: 300))
-        
-        headerView.backgroundColor = .link
-        
-        let imageView = UIImageView(frame: CGRect(x: (headerView.width-150) / 2,
-                                                  y: 75,
-                                                  width: 150,
-                                                  height: 150))
-        imageView.contentMode = .scaleAspectFill
-        imageView.backgroundColor = .white
-        imageView.layer.borderColor = UIColor.white.cgColor
-        imageView.layer.borderWidth = 3
-        imageView.layer.masksToBounds = true
-        imageView.layer.cornerRadius = imageView.width/2
-        headerView.addSubview(imageView)
-        
-        StorageManager.shared.downloadURL(for: path, completion: { result in
+                
+        StorageManager.shared.downloadURL(for: path, completion: { [weak self] result in
             switch result {
             case .success(let url):
-                imageView.sd_setImage(with: url, completed: nil)
+                self?.imageView.sd_setImage(with: url, completed: nil)
             case .failure(let error):
                 print("Failed to get download url: \(error)")
             }
         })
-        return headerView
     }
 }
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return data.count
+        return profileVM.getNumberOfDataItems()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let viewModel = data[indexPath.row]
+        let viewModel = profileVM.getProfileDataVM(forIndexPath: indexPath)
         
         let cell = tableView.dequeueReusableCell(withIdentifier: ProfileTableViewCell.identifier, for: indexPath) as! ProfileTableViewCell
         cell.setUp(with: viewModel)
@@ -136,24 +152,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        data[indexPath.row].handler?()
+        profileVM.getProfileDataVM(forIndexPath: indexPath).handler?()
     }
-}
-
-class ProfileTableViewCell: UITableViewCell {
-
-    static let identifier = "ProfileTableViewCell"
-
-    public func setUp(with viewModel: ProfileViewModel) {
-        textLabel?.text = viewModel.title
-        switch viewModel.viewModelType {
-        case .info:
-            textLabel?.textAlignment = .left
-            selectionStyle = .none
-        case .logout:
-            textLabel?.textColor = .red
-            textLabel?.textAlignment = .center
-        }
-    }
-
 }

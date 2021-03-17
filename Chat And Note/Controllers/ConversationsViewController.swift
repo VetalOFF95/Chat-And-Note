@@ -6,15 +6,14 @@
 //
 
 import UIKit
-import FirebaseAuth
 import JGProgressHUD
 
 /// Controller that shows list of conversations
 final class ConversationsViewController: UIViewController {
     
     private let spinner = JGProgressHUD(style: .dark)
-    
-    private var conversations = [Conversation]()
+    private var conversationsVM = ConversationsVM()
+    private var presentedUserEmail: String?
     
     private let tableView: UITableView = {
         let table = UITableView()
@@ -34,8 +33,6 @@ final class ConversationsViewController: UIViewController {
         return label
     }()
     
-    private var loginObserver: NSObjectProtocol?
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .compose,
@@ -43,108 +40,9 @@ final class ConversationsViewController: UIViewController {
                                                             action: #selector(didTapComposeButton))
         view.addSubview(tableView)
         view.addSubview(noConversationsLabel)
-        setupTableView()
-        startListeningForCOnversations()
         
-        loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification, object: nil, queue: .main, using: { [weak self] _ in
-            guard let strongSelf = self else {
-                return
-            }
-            
-            strongSelf.startListeningForCOnversations()
-        })
-    }
-    
-    private func startListeningForCOnversations() {
-        guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
-            return
-        }
-        
-        if let observer = loginObserver {
-            NotificationCenter.default.removeObserver(observer)
-        }
-        
-        print("starting conversation fetch...")
-        
-        let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
-        
-        DatabaseManager.shared.getAllConversations(for: safeEmail, completion: { [weak self] result in
-            switch result {
-            case .success(let conversations):
-                print("successfully got conversation models")
-                guard !conversations.isEmpty else {
-                    self?.tableView.isHidden = true
-                    self?.noConversationsLabel.isHidden = false
-                    return
-                }
-                self?.noConversationsLabel.isHidden = true
-                self?.tableView.isHidden = false
-                self?.conversations = conversations
-                
-                DispatchQueue.main.async {
-                    self?.tableView.reloadData()
-                }
-            case .failure(let error):
-                self?.tableView.isHidden = true
-                self?.noConversationsLabel.isHidden = false
-                print("failed to get convos: \(error)")
-            }
-        })
-    }
-    
-    @objc private func didTapComposeButton() {
-        let vc = NewConversationViewController()
-        vc.completion = { [weak self] result in
-            guard let strongSelf = self else {
-                return
-            }
-            
-            let currentConversations = strongSelf.conversations
-            
-            if let targetConversation = currentConversations.first(where: {
-                $0.otherUserEmail == DatabaseManager.safeEmail(emailAddress: result.email)
-            }) {
-                let vc = ChatViewController(with: targetConversation.otherUserEmail, id: targetConversation.id)
-                vc.isNewConversation = false
-                vc.title = targetConversation.name
-                vc.navigationItem.largeTitleDisplayMode = .never
-                strongSelf.navigationController?.pushViewController(vc, animated: true)
-            } else {
-                strongSelf.createNewConversation(result: result)
-            }
-        }
-        let navVC = UINavigationController(rootViewController: vc)
-        present(navVC, animated: true)
-    }
-    
-    private func createNewConversation(result: SearchResult) {
-        let name = result.name
-        let email = DatabaseManager.safeEmail(emailAddress: result.email)
-        
-        // Check in db if conversation with these two users exists
-        // if it does, reuse conversation id
-        // otherwise use existing code
-        
-        DatabaseManager.shared.conversationExists(with: email, completion: { [weak self] result in
-            guard let strongSelf = self else {
-                return
-            }
-            
-            switch result {
-            case .success(let conversationId):
-                let vc = ChatViewController(with: email, id: conversationId)
-                vc.isNewConversation = false
-                vc.title = name
-                vc.navigationItem.largeTitleDisplayMode = .never
-                strongSelf.navigationController?.pushViewController(vc, animated: true)
-            case .failure(_):
-                let vc = ChatViewController(with: email, id: nil)
-                vc.isNewConversation = true
-                vc.title = name
-                vc.navigationItem.largeTitleDisplayMode = .never
-                strongSelf.navigationController?.pushViewController(vc, animated: true)
-            }
-        })
+        tableView.delegate = self
+        tableView.dataSource = self
     }
     
     override func viewDidLayoutSubviews() {
@@ -156,35 +54,90 @@ final class ConversationsViewController: UIViewController {
                                             height: 100)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         validateAuth()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        let currentUserEmail = CacheManager.shared.getEmail()
+        if presentedUserEmail != currentUserEmail {
+            conversationsVM = ConversationsVM()
+            conversationsVM.startListeningForConversations { [weak self] result in
+                switch result {
+                case .success(let conversations):
+                    print("Successfully got conversation models")
+                    guard !conversations.isEmpty else {
+                        self?.tableView.isHidden = true
+                        self?.noConversationsLabel.isHidden = false
+                        return
+                    }
+                    self?.noConversationsLabel.isHidden = true
+                    self?.tableView.isHidden = false
+                    
+                    DispatchQueue.main.async {
+                        self?.tableView.reloadData()
+                    }
+                case .failure(let error):
+                    print("Failed to get conversations: \(error)")
+                    self?.tableView.isHidden = true
+                    self?.noConversationsLabel.isHidden = false
+                }
+            }
+            conversationsVM.addLoginObserver()
+            
+            presentedUserEmail = currentUserEmail
+        }
+    }
+    
+    @objc private func didTapComposeButton() {
+        let vc = NewConversationViewController()
+        vc.completion = { [weak self] result in
+            guard let strongSelf = self else {
+                return
+            }
+            
+            let currentConversations = strongSelf.conversationsVM.getConversations()
+            
+            if let targetConversation = currentConversations.first(where: {
+                $0.otherUserEmail == DatabaseManager.safeEmail(emailAddress: result.email)
+            }) {
+                let vc = ChatViewController(with: targetConversation.otherUserEmail, id: targetConversation.id)
+                vc.isNewConversation = false
+                vc.title = targetConversation.name
+                vc.navigationItem.largeTitleDisplayMode = .never
+                strongSelf.navigationController?.pushViewController(vc, animated: true)
+            } else {
+                let conversationsVM = ConversationsVM()
+                let vc = conversationsVM.createNewConversation(result: result)
+                strongSelf.navigationController?.pushViewController(vc, animated: true)
+            }
+        }
+        let navVC = UINavigationController(rootViewController: vc)
+        present(navVC, animated: true)
+    }
+    
     private func validateAuth() {
-        if FirebaseAuth.Auth.auth().currentUser == nil {
+        if !AuthManager.shared.isLoggedIn() {
             let vc = LoginViewController()
             let nav = UINavigationController(rootViewController: vc)
             nav.modalPresentationStyle = .fullScreen
             present(nav, animated: false)
         }
     }
-    
-    private func setupTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
-    }
-    
 }
 
+//MARK: - Table View
 extension ConversationsViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return conversations.count
+        return conversationsVM.getNumberOfConversations()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let model = conversations[indexPath.row]
+        let model = conversationsVM.getConversationModel(forIndexPath: indexPath)
         let cell = tableView.dequeueReusableCell(withIdentifier: ConversationTableViewCell.identifier,
                                                  for: indexPath) as! ConversationTableViewCell
         cell.configure(with: model)
@@ -193,7 +146,7 @@ extension ConversationsViewController: UITableViewDelegate, UITableViewDataSourc
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let model = conversations[indexPath.row]
+        let model = conversationsVM.getConversationModel(forIndexPath: indexPath)
         openConversation(model)
     }
     
@@ -208,16 +161,12 @@ extension ConversationsViewController: UITableViewDelegate, UITableViewDataSourc
         return 120
     }
     
-    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-        return .delete
-    }
-    
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // begin delete
-            let conversationId = conversations[indexPath.row].id
+            let conversationId = conversationsVM.getConversationModel(forIndexPath: indexPath).id
             tableView.beginUpdates()
-            self.conversations.remove(at: indexPath.row)
+            conversationsVM.removeConversationModel(forIndexPath: indexPath)
             tableView.deleteRows(at: [indexPath], with: .left)
 
             DatabaseManager.shared.deleteConversation(conversationId: conversationId, completion: { success in

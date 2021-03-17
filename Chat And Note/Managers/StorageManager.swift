@@ -12,7 +12,6 @@ import FirebaseStorage
 final class StorageManager {
     
     private init() {}
-    
     static let shared = StorageManager()
     
     private let storage = Storage.storage().reference()
