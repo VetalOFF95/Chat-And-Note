@@ -47,6 +47,8 @@
 		FA788747260654E7004ED5E2 /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA788746260654E7004ED5E2 /* Note.swift */; };
 		FA78874D26065B9E004ED5E2 /* ItemsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78874C26065B9D004ED5E2 /* ItemsViewController.swift */; };
 		FA78875026069593004ED5E2 /* NotesVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78874F26069593004ED5E2 /* NotesVM.swift */; };
+		FA78875526079497004ED5E2 /* NotePickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78875426079497004ED5E2 /* NotePickerViewController.swift */; };
+		FA78875826079574004ED5E2 /* NoteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA78875726079574004ED5E2 /* NoteTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -93,6 +95,8 @@
 		FA788746260654E7004ED5E2 /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 		FA78874C26065B9D004ED5E2 /* ItemsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemsViewController.swift; sourceTree = "<group>"; };
 		FA78874F26069593004ED5E2 /* NotesVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesVM.swift; sourceTree = "<group>"; };
+		FA78875426079497004ED5E2 /* NotePickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotePickerViewController.swift; sourceTree = "<group>"; };
+		FA78875726079574004ED5E2 /* NoteTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteTableViewCell.swift; sourceTree = "<group>"; };
 		FC082CF22F21C8D12B11AD16 /* Pods_Chat_And_Note.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Chat_And_Note.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -176,9 +180,7 @@
 			children = (
 				FA78850525DFC7C8004ED5E2 /* Storyboards */,
 				FA7884F325DFC245004ED5E2 /* Assets.xcassets */,
-				FA7885C225EEBC50004ED5E2 /* ConversationTableViewCell.swift */,
-				FA7885C525F1751F004ED5E2 /* NewConversationCell.swift */,
-				FA78862925FCFB42004ED5E2 /* ProfileTableViewCell.swift */,
+				FA78875A260797A1004ED5E2 /* Cells */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -273,6 +275,7 @@
 				FA7885A025E4390A004ED5E2 /* ChatViewController.swift */,
 				FA78850F25DFC966004ED5E2 /* PhotoViewerViewController.swift */,
 				FA7885C825F63F33004ED5E2 /* LocationPickerViewController.swift */,
+				FA78875426079497004ED5E2 /* NotePickerViewController.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -292,6 +295,17 @@
 				FA78874C26065B9D004ED5E2 /* ItemsViewController.swift */,
 			);
 			path = Notes;
+			sourceTree = "<group>";
+		};
+		FA78875A260797A1004ED5E2 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				FA7885C225EEBC50004ED5E2 /* ConversationTableViewCell.swift */,
+				FA7885C525F1751F004ED5E2 /* NewConversationCell.swift */,
+				FA78862925FCFB42004ED5E2 /* ProfileTableViewCell.swift */,
+				FA78875726079574004ED5E2 /* NoteTableViewCell.swift */,
+			);
+			path = Cells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -446,6 +460,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA78850925DFC909004ED5E2 /* LoginViewController.swift in Sources */,
+				FA78875826079574004ED5E2 /* NoteTableViewCell.swift in Sources */,
 				FA78860525FA91F0004ED5E2 /* FacebookManager.swift in Sources */,
 				FA788747260654E7004ED5E2 /* Note.swift in Sources */,
 				FA7885F525F78DD3004ED5E2 /* ProfileDataVM.swift in Sources */,
@@ -453,6 +468,7 @@
 				FA7885C625F17520004ED5E2 /* NewConversationCell.swift in Sources */,
 				FA78854A25E0322A004ED5E2 /* DatabaseManager.swift in Sources */,
 				FA7885EE25F78346004ED5E2 /* ChatModels.swift in Sources */,
+				FA78875526079497004ED5E2 /* NotePickerViewController.swift in Sources */,
 				FA78861825FC202D004ED5E2 /* NewConversationVM.swift in Sources */,
 				FA78860825FA943F004ED5E2 /* FacebookUser.swift in Sources */,
 				FA78850C25DFC931004ED5E2 /* RegisterViewController.swift in Sources */,

@@ -13,7 +13,7 @@ import AVFoundation
 import AVKit
 import CoreLocation
 
-final class ChatViewController: MessagesViewController {
+class ChatViewController: MessagesViewController {
     
     private let chatVM = ChatVM()
     private var senderPhotoURL: URL?
@@ -30,9 +30,7 @@ final class ChatViewController: MessagesViewController {
     public let otherUserEmail: String
     public var conversationId: String?
     public var isNewConversation = false
-    
-//    private var messages = [Message]()
-    
+        
     private var selfSender: Sender? {
         guard let email = CacheManager.shared.getEmail() else {
             return nil
@@ -124,6 +122,9 @@ final class ChatViewController: MessagesViewController {
         }))
         actionSheet.addAction(UIAlertAction(title: "Location", style: .default, handler: { [weak self] _ in
             self?.presentLocationPicker()
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Note", style: .default, handler: { [weak self] _ in
+            self?.presentNotePicker()
         }))
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil ))
         
@@ -224,6 +225,52 @@ final class ChatViewController: MessagesViewController {
                 
             })
         }
+        navigationController?.pushViewController(vc, animated: true)
+    }
+}
+
+//MARK: - Note Picker
+extension ChatViewController {
+    
+    private func presentNotePicker() {
+        let vc = NotePickerViewController()
+        vc.title = "Pick Note"
+        vc.navigationItem.largeTitleDisplayMode = .never
+        vc.completion = { [weak self] note in
+            
+            guard let strongSelf = self else {
+                return
+            }
+            
+            guard let messageId = strongSelf.createMessageId(),
+                  let conversationId = strongSelf.conversationId,
+                  let name = strongSelf.title,
+                  let selfSender = strongSelf.selfSender else {
+                return
+            }
+            
+            let text = "SHARED NOTE: \(note.title) from \(note.parentCategory) category"
+            
+            let message = Message(sender: selfSender,
+                                  messageId: messageId,
+                                  sentDate: Date(),
+                                  kind: .text(text))
+            
+            DatabaseManager.shared.sendMessage(to: conversationId, otherUserEmail: strongSelf.otherUserEmail, name: name, newMessage: message, completion: { success in
+                
+                if success {
+                    print("Note message sent")
+                    DatabaseManager.shared.insertNoteItem(item: note, for: strongSelf.otherUserEmail, completion: { success in
+                        if success {
+                            print("Note successfully added to other user")
+                        }
+                    })
+                } else {
+                    print("Failed to send note message")
+                }
+            })
+        }
+        
         navigationController?.pushViewController(vc, animated: true)
     }
 }
@@ -396,7 +443,6 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     }
     
     private func createMessageId() -> String? {
-        // date, otherUesrEmail, senderEmail, randomInt
         guard let currentUserEmail = CacheManager.shared.getEmail() else {
             return nil
         }

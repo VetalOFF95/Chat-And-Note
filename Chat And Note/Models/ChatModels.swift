@@ -22,7 +22,7 @@ extension MessageKind {
         case .text(_):
             return "text"
         case .attributedText(_):
-            return "attributed_text"
+            return "note"
         case .photo(_):
             return "photo"
         case .video(_):
@@ -36,7 +36,7 @@ extension MessageKind {
         case .contact(_):
             return "contact"
         case .custom(_):
-            return "customc"
+            return "custom"
         case .linkPreview(_):
             return "linkPreview"
         }
