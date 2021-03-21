@@ -684,3 +684,69 @@ extension DatabaseManager {
     }
     
 }
+
+//MARK: - Notes
+extension DatabaseManager {
+    
+    func insertNoteItem(item: Note, for userEmail: String, completion: @escaping (Bool) -> Void) {
+        let safeEmail = DatabaseManager.safeEmail(emailAddress: userEmail)
+
+        let dateString = ChatViewController.dateFormatter.string(from: item.dateCreated)
+        
+        let noteItem: [String: String] = [
+            "title": item.title,
+            "date": dateString,
+            "category": item.parentCategory
+        ]
+        
+        database.child("\(safeEmail)/notes").observeSingleEvent(of: .value, with: { [weak self] snapshot in
+            if var notesCollection = snapshot.value as? [[String: String]] {
+                notesCollection.append(noteItem)
+                
+                self?.database.child("\(safeEmail)/notes").setValue(notesCollection, withCompletionBlock: { error, _ in
+                    
+                    guard error == nil else {
+                        completion(false)
+                        return
+                    }
+                    completion(true)
+                })
+            } else {
+                var notesCollection = [[String: String]]()
+                notesCollection.append(noteItem)
+                
+                self?.database.child("\(safeEmail)/notes").setValue(notesCollection, withCompletionBlock: { error, _ in
+                    
+                    guard error == nil else {
+                        completion(false)
+                        return
+                    }
+                    completion(true)
+                })
+            }
+        })
+    }
+    
+    func fetchNotes(for userEmail: String, completion: @escaping ([Note]) -> ()) {
+        let safeEmail = DatabaseManager.safeEmail(emailAddress: userEmail)
+
+        database.child("\(safeEmail)/notes/").observeSingleEvent(of: .value, with: { snapshot in
+            var notesArray = [Note]()
+            if let notesCollection = snapshot.value as? [[String: String]] {
+                for note in notesCollection {
+                    guard let title = note["title"],
+                          let date = note["date"],
+                          let category = note["category"],
+                          let dateCreated = ChatViewController.dateFormatter.date(from: date) else {
+                        return
+                    }
+                    notesArray.append(Note(title: title,
+                                           dateCreated: dateCreated,
+                                           parentCategory: category))
+                }
+            }
+            completion(notesArray)
+        })
+    }
+    
+}
