@@ -90,10 +90,10 @@
             </objects>
             <point key="canvasLocation" x="-165.21739130434784" y="1636.6071428571429"/>
         </scene>
-        <!--Items View Controller-->
+        <!--Notes View Controller-->
         <scene sceneID="chv-jc-rps">
             <objects>
-                <viewController id="Ur3-ff-9Sm" customClass="ItemsViewController" customModule="Chat_And_Note" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="Ur3-ff-9Sm" customClass="NotesViewController" customModule="Chat_And_Note" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="xNX-Ra-ZHd">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

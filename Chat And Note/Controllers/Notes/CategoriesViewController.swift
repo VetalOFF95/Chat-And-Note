@@ -11,7 +11,7 @@ class CategoriesViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
-    var categories = [String]()
+    let categoriesVM = CategoriesVM()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,19 +25,7 @@ class CategoriesViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        guard let email = CacheManager.shared.getEmail() else {
-            return
-        }
-        
-        categories = [String]()
-        
-        DatabaseManager.shared.fetchNotes(for: email) { [weak self] notes in
-            for note in notes {
-                self?.categories.append(note.parentCategory)
-            }
-            self?.categories = Array(Set(self!.categories))
-            self?.tableView.reloadData()
-        }
+        categoriesVM.fetchCategories { [weak self] in self?.tableView.reloadData() }
     }
     
     @IBAction func addButtonPressed(_ sender: Any) {
@@ -46,7 +34,7 @@ class CategoriesViewController: UIViewController {
         let alert = UIAlertController(title: "Add New Category", message: "", preferredStyle: .alert)
         let action = UIAlertAction(title: "Add", style: .default) { [weak self] (action) in
             if !textField.text!.trimmingCharacters(in: .whitespaces).isEmpty {
-                self?.categories.append(textField.text!)
+                self?.categoriesVM.addCategory(title: textField.text!)
                 self?.tableView.reloadData()
             }
         }
@@ -63,12 +51,12 @@ class CategoriesViewController: UIViewController {
 extension CategoriesViewController: UITableViewDataSource, UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        return categoriesVM.getNumberOfCategories()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "categoryCell", for: indexPath)
-        cell.textLabel?.text = categories[indexPath.row]
+        cell.textLabel?.text = categoriesVM.getCategory(for: indexPath)
         return cell
     }
     
@@ -78,9 +66,9 @@ extension CategoriesViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        let destinationVC = segue.destination as! ItemsViewController
+        let destinationVC = segue.destination as! NotesViewController
         if let indexPath = tableView.indexPathForSelectedRow {
-            destinationVC.currentCategory = categories[indexPath.row]
+            destinationVC.notesVM = NotesVM(currentCategory: categoriesVM.getCategory(for: indexPath)) 
         }
     }
 }
