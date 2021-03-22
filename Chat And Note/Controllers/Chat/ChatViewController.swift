@@ -249,7 +249,7 @@ extension ChatViewController {
                 return
             }
             
-            let text = "SHARED NOTE: \(note.title) from \(note.parentCategory) category"
+            let text = "SHARED NOTE: '\(note.title)' from '\(note.parentCategory)' category"
             
             let message = Message(sender: selfSender,
                                   messageId: messageId,

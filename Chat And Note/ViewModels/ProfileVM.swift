@@ -7,6 +7,16 @@
 
 import Foundation
 
+enum ProfileDataViewModelType {
+    case info, logout
+}
+
+struct ProfileDataVM {
+    let viewModelType: ProfileDataViewModelType
+    let title: String
+    let handler: (() -> Void)?
+}
+
 class ProfileVM {
     
     var profileData = [ProfileDataVM]()
