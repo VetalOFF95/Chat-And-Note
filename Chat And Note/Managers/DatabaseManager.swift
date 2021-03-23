@@ -355,7 +355,7 @@ extension DatabaseManager {
                       let senderEmail = dictionary["sender_email"] as? String,
                       let type = dictionary["type"] as? String,
                       let dateString = dictionary["date"] as? String,
-                      let date = ChatViewController.dateFormatter.date(from: dateString)else {
+                      let date = ChatViewController.dateFormatter.date(from: dateString) else {
                     return nil
                 }
                 

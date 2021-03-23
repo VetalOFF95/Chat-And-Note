@@ -24,6 +24,7 @@ class ChatViewController: MessagesViewController {
         formatter.dateStyle = .medium
         formatter.timeStyle = .long
         formatter.locale = .current
+        formatter.dateFormat = "dd_MM_yyyy HH:mm:ss"
         return formatter
     }()
     
@@ -55,6 +56,7 @@ class ChatViewController: MessagesViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
+        messagesCollectionView.contentInset = UIEdgeInsets(top: 50, left: 0, bottom: 0, right: 0)
         
         messagesCollectionView.messagesDataSource = self
         messagesCollectionView.messagesLayoutDelegate = self
@@ -340,7 +342,7 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
                 }
             }
         } else if let videoUrl = info[.mediaURL] as? URL {
-            let fileName = "photo_message_" + messageId.replacingOccurrences(of: " ", with: "-") + ".mov"
+            let fileName = "video_message_" + messageId.replacingOccurrences(of: " ", with: "-") + ".mov"
             
             // Upload Video
             StorageManager.shared.uploadMessageVideo(with: videoUrl, fileName: fileName) { [weak self] result in

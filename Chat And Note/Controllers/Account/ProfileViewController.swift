@@ -43,6 +43,8 @@ final class ProfileViewController: UIViewController {
         tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: ProfileTableViewCell.identifier)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
         
+        tableView.separatorStyle = .none
+        
         presentedUserEmail = CacheManager.shared.getEmail()
         prepareProfileData()
     }
@@ -53,9 +55,9 @@ final class ProfileViewController: UIViewController {
         headerView.frame = CGRect(x: 0,
                                   y: 0,
                                   width: view.width,
-                                  height: 300)
+                                  height: 200)
         imageView.frame = CGRect(x: (headerView.width-150) / 2,
-                                 y: 75,
+                                 y: 25,
                                  width: 150,
                                  height: 150)
         imageView.layer.cornerRadius = imageView.width/2
