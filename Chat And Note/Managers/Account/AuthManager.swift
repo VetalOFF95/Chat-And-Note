@@ -15,7 +15,8 @@ class AuthManager {
     private init() {}
     
     public func isLoggedIn() -> Bool {
-        return FirebaseAuth.Auth.auth().currentUser != nil ? true : false
+        return FirebaseAuth.Auth.auth().currentUser != nil &&
+            CacheManager.shared.getEmail() != nil ? true : false
     }
     
     public func logIn(with email: String, password: String, completion: @escaping (Result<Any, Error>) -> Void) {
